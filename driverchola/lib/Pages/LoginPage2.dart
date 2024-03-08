@@ -1,0 +1,179 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers, unused_element
+
+import 'dart:convert';
+
+import 'package:chola_driver_flutter/Constants/Constants.dart';
+import 'package:chola_driver_flutter/Pages/EmailVerify.dart';
+import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
+import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
+import 'package:chola_driver_flutter/Widgets/Field.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class LoginPage2 extends StatefulWidget {
+  final String jwt;
+  LoginPage2({required this.jwt, super.key});
+
+  @override
+  State<LoginPage2> createState() => _LoginPage2State();
+}
+
+class _LoginPage2State extends State<LoginPage2> {
+  TextEditingController emailController = TextEditingController();
+  FocusNode _emailFocusNode = FocusNode();
+  final _emailFormKey = GlobalKey<FormState>();
+  Map<String, dynamic> data = {};
+  createEmail(String email) async {
+    print('dhjbcjdkbcdkj');
+    // print(dialCode.runtimeType);
+    var response = await http.put(
+      Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.jwt}',
+      },
+      body: jsonEncode({
+        'email': email,
+      }),
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      print(json.decode(response.body).runtimeType);
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to verify PhoneNumber.');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _emailFocusNode.requestFocus();
+  }
+
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+
+    bool _isValidEmail(String email) {
+      String emailPattern = r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$';
+      RegExp regExp = RegExp(emailPattern);
+      return regExp.hasMatch(email);
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(
+        top: statusBarHeight,
+      ),
+      child: Scaffold(
+        backgroundColor: Constants.themeColor,
+        appBar: CustomAppBar(
+          title: "Enter Email",
+          preferredHeight: size.height * 0.08,
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.05,
+            vertical: size.height * 0.03,
+          ),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _emailFormKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Enter Your Email Address',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: size.shortestSide * 0.06,
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height * 0.02,
+                  ),
+                  Field(
+                    labelText: "",
+                    hintText: "Enter Your Email Address",
+                    vertical: 0.03,
+                    horizontal: 0.04,
+                    icon: Icon(Icons.email),
+                    snackbarText: 'Please enter a Valid Email',
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value!.isEmpty || !_isValidEmail(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                    // onChanged: (value) => _isValidEmail,
+                    fieldController: emailController,
+                    focusNode: _emailFocusNode,
+                  ),
+                  SizedBox(
+                    height: size.height * 0.03,
+                  ),
+                  AgreeButton(
+                    buttonText: "Next",
+                    onPressed: () async {
+                      try {
+                        if (_emailFormKey.currentState!.validate()) {
+                          Map<String, dynamic> result = await createEmail(
+                            emailController.text,
+                          );
+
+                          setState(() {
+                            data = result;
+                          });
+                          print(data['phoneNoVerified']);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EmailVerify(
+                                email: emailController.text,
+                                jwt: data['jwt'] as String,
+                              ),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        print('Exception: $e');
+                      }
+                    },
+                    padding: 0.9,
+                    borderRadius: 0,
+                    suffixWidget: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height * 0.03,
+                  ),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'By continuing you may receive an SMS for verification.\nStandard Message and data rates may apply.',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
+                        fontSize: size.shortestSide * 0.05,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
