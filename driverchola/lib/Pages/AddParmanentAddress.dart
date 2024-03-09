@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
 // import 'package:chola_driver_flutter/Widgets/BackButton.dart';
@@ -6,6 +8,9 @@ import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 // import 'package:chola_driver_flutter/Widgets/DropDown.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:flutter/material.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 class ParmanentAddress extends StatefulWidget {
   const ParmanentAddress({super.key});
@@ -308,8 +313,28 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
               ),
               child: AgreeButton(
                 buttonText: "Save Address",
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                    Directory appDocDir = await getApplicationCacheDirectory();
+                    String appDocPath = appDocDir.path;
+
+                    // Create a "Permanent Address" folder if it doesn't exist
+                    String permanentAddressFolderPath = '$appDocPath/Documents';
+                    Directory(permanentAddressFolderPath)
+                        .createSync(recursive: true);
+                    print(permanentAddressFolderPath);
+                    // Store the address information in a file inside the folder
+                    File addressFile =
+                        File('$permanentAddressFolderPath/address.txt');
+                    await addressFile
+                        .writeAsString('House No: ${houseController.text}\n'
+                            'Apartment: ${apartmentController.text}\n'
+                            'Street: ${streetController.text}\n'
+                            'Address Line 2: ${addressline2Controller.text}\n'
+                            'City: ${cityController.text}\n'
+                            'State: ${stateController.text}\n'
+                            'Country: ${countryController.text}');
+                    
                     Navigator.push(
                       context,
                       MaterialPageRoute(

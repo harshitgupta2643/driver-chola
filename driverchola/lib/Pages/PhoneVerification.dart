@@ -13,7 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class PhoneVerify extends StatefulWidget {
   final String phoneNumber;
-  final String verificationId;
+  // final String verificationId;
   final bool alreadyExist;
   final String jwt;
   PhoneVerify({
@@ -21,7 +21,7 @@ class PhoneVerify extends StatefulWidget {
     required this.phoneNumber,
     required this.alreadyExist,
     required this.jwt,
-    required this.verificationId,
+    // required this.verificationId,
   }) : super(key: key);
 
   @override
@@ -149,7 +149,7 @@ class _PhoneVerifyState extends State<PhoneVerify> {
                     height: size.height * 0.05,
                   ),
                   Text(
-                    "Enter the 6-digit code sent to " + widget.phoneNumber,
+                    "Enter the 6-digit code sent to \n" + widget.phoneNumber,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     textAlign: TextAlign.center,
@@ -173,65 +173,92 @@ class _PhoneVerifyState extends State<PhoneVerify> {
                   SizedBox(
                     height: size.height * 0.02,
                   ),
-                  _showResendButton
-                      ? AgreeButton(
-                          onPressed: resendOTP,
-                          buttonText: "Resend OTP",
-                          padding: 0.6,
-                        )
-                      : Text(
-                          "You can resend OTP in $_resendSeconds sec(s)",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: size.shortestSide * 0.05,
-                            color: Colors.black,
-                          ),
-                        ),
-                  SizedBox(
-                    height: size.height * 0.02,
-                  ),
                   AgreeButton(
-                    buttonText: "Verify OTP",
+                    buttonText: "Confirm",
                     onPressed: () async {
                       try {
-                        PhoneAuthCredential credential =
-                            PhoneAuthProvider.credential(
-                          verificationId: widget.verificationId,
-                          smsCode: _otpController.text.toString(),
-                        );
-                        UserCredential userCredential = await FirebaseAuth
-                            .instance
-                            .signInWithCredential(credential);
-                        if (userCredential.user != null) {
-                          Map<String, dynamic> result =
-                              await verifyPhoneNumber();
-                          setState(() {
-                            data = result;
-                          });
-                          (widget.alreadyExist)
-                              ? Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(),
-                                  ),
-                                )
-                              : Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        LoginPage2(jwt: data['jwt'] as String),
-                                  ),
-                                );
-                        }
+                        // PhoneAuthCredential credential =
+                        //     PhoneAuthProvider.credential(
+                        //   verificationId: widget.verificationId,
+                        //   smsCode: _otpController.text.toString(),
+                        // );
+                        // UserCredential userCredential = await FirebaseAuth
+                        //     .instance
+                        //     .signInWithCredential(credential);
+                        // if (userCredential.user != null) {
+                        Map<String, dynamic> result = await verifyPhoneNumber();
+                        setState(() {
+                          data = result;
+                        });
+                        (widget.alreadyExist)
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(),
+                                ),
+                              )
+                            : Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      LoginPage2(jwt: data['jwt'] as String),
+                                ),
+                              );
+                        // }
                       } catch (e) {
                         Constants.showError(context, 'Exception: $e');
                       }
                     },
-                    padding: 0.8,
-                  )
+                    padding: 0.7,
+                  ),
+                  SizedBox(
+                    height: size.height * 0.01,
+                  ),
+                  _showResendButton
+                      ? Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            child: TextButton(
+                              onPressed: resendOTP,
+                              child: Text(
+                                "Resend OTP",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: size.shortestSide * 0.04,
+                                  color: Color(0xFF000000),
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                              // padding: 0.6,
+                            ),
+                          ),
+                        )
+                      : Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            child: Text(
+                              "Resend OTP $_resendSeconds sec(s)",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: size.shortestSide * 0.04,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
                 ],
               ),
             ),

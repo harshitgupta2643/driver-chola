@@ -1,3 +1,4 @@
+import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
 import 'package:chola_driver_flutter/Pages/ComingSoon.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ class CardRow1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String cardText = 'Ride';
-    String descriptionText = 'Plan your ride';
+    // String descriptionText = 'Plan your ride';
     var size = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -53,26 +54,32 @@ class CardRow1 extends StatelessWidget {
                   splashColor: Colors.black26,
                   onTap: () {
                     if (index == 0) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ComingSoon(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ComingSoon(),
+                      //   ),
+                      // );
+                      Constants.showError(context,
+                          'Early Acess App , Features will be available Soon...');
                     } else if (index == 1) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ComingSoon(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ComingSoon(),
+                      //   ),
+                      // );
+                      Constants.showError(context,
+                          'Early Acess App , Features will be available Soon...');
                     } else if (index == 2) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ComingSoon(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ComingSoon(),
+                      //   ),
+                      // );
+                      Constants.showError(context,
+                          'Early Acess App , Features will be available Soon...');
                     } else if (index == 3) {
                       Navigator.push(
                         context,
@@ -81,12 +88,14 @@ class CardRow1 extends StatelessWidget {
                         ),
                       );
                     } else if (index == 4) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ComingSoon(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ComingSoon(),
+                      //   ),
+                      // );
+                      Constants.showError(context,
+                          'Early Acess App , Features will be available Soon...');
                     } else {
                       Navigator.push(
                         context,
@@ -124,7 +133,7 @@ class CardRow1 extends StatelessWidget {
                               child: Image.asset(
                                 'assets/card_i_${index}.png',
                                 fit: BoxFit.fitWidth,
-                                height: size.height * 0.14,
+                                height: size.height * 0.16,
                                 width: size.width,
                               ),
                             ),

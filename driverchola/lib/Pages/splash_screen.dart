@@ -25,55 +25,30 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         height: double.maxFinite,
         width: double.maxFinite,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/bbg.png'),
+            image: AssetImage('assets/splash_screen.jpeg'),
             fit: BoxFit.cover,
           ),
         ),
-        child: Center(
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: 'CHOLA\n',
-                  style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.15,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    // decoration: TextDecoration.underline,
-                    decorationColor: Colors.white,
-                    decorationThickness: 1.2,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-                TextSpan(
-                  text: '            Chariots\n',
-                  style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.08,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                ),
-                TextSpan(
-                  text: 'Travel Made Easy',
-                  style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.055,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                ),
-              ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/Chola_Logo.png',
+              width: size.width,
             ),
-          ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            Image.asset(
+              'assets/tagLine.png',
+              width: size.width * 0.6,
+            ),
+          ],
         ),
       ),
     );

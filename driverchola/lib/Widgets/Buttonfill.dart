@@ -38,7 +38,7 @@ class AgreeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textHeight = _getTextHeight(context);
     final minHeight = textHeight + 16.0;
-    var size = MediaQuery.of(context).size;
+    // var size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: onPressed,
       child: Container(

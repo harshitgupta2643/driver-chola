@@ -5,14 +5,14 @@ import 'package:chola_driver_flutter/Pages/PartnerPreForm.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 import 'package:flutter/material.dart';
 
-class TermsAndPrivacy extends StatefulWidget {
-  const TermsAndPrivacy({Key? key}) : super(key: key);
+class TermsAndPrivacy1 extends StatefulWidget {
+  const TermsAndPrivacy1({Key? key}) : super(key: key);
 
   @override
-  State<TermsAndPrivacy> createState() => _TermsAndPrivacyState();
+  State<TermsAndPrivacy1> createState() => _TermsAndPrivacy1State();
 }
 
-class _TermsAndPrivacyState extends State<TermsAndPrivacy> {
+class _TermsAndPrivacy1State extends State<TermsAndPrivacy1> {
   final String lastUpdatedDate = "January 4, 2024";
   final ScrollController _scrollController = ScrollController();
   bool atBottom = true;
@@ -220,11 +220,7 @@ class _TermsAndPrivacyState extends State<TermsAndPrivacy> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PartnerPreForm()),
-                                );
+                                Navigator.pop(context);
                               },
                               child: Container(
                                 width: size.width * 0.5,
@@ -332,6 +328,6 @@ class _TermsAndPrivacyState extends State<TermsAndPrivacy> {
 
 // void main() {
 //   runApp(MaterialApp(
-//     home: TermsAndPrivacy(),
+//     home: TermsAndPrivacy1(),
 //   ));
 // }

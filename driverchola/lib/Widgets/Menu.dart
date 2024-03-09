@@ -1,5 +1,8 @@
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/ComingSoon.dart';
+import 'package:chola_driver_flutter/Pages/Refer&Earn.dart';
+import 'package:chola_driver_flutter/Pages/Setting.dart';
+import 'package:chola_driver_flutter/Pages/TermsAndPrivacy1.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomMenuList.dart';
 import 'package:chola_driver_flutter/main.dart';
@@ -105,10 +108,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.person_outline_sharp,
                       title: 'Account',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Constants.showError(context,
+                            'Early Acess App , Features will be available Soon...');
                         // Navigator.push(
                         //     context,
                         //     MaterialPageRoute(
@@ -122,10 +123,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.person,
                       title: 'Profile',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Constants.showError(context,
+                            'Early Acess App , Features will be available Soon...');
                       },
                     ),
                     // SizedBox(
@@ -148,10 +147,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.credit_card_outlined,
                       title: 'Payments',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Constants.showError(context,
+                            'Early Acess App , Features will be available Soon...');
                       },
                     ),
                     SizedBox(
@@ -162,9 +159,11 @@ class MenuWidget extends StatelessWidget {
                       title: 'Refer & Earn',
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReferAndEarn(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(
@@ -174,10 +173,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.add_card_rounded,
                       title: 'Gift Cards',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Constants.showError(context,
+                            'Early Acess App , Features will be available Soon...');
                       },
                     ),
                     SizedBox(
@@ -187,10 +184,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.settings_outlined,
                       title: 'Settings',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Setting()));
                       },
                     ),
                     SizedBox(
@@ -200,10 +195,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.hourglass_top_outlined,
                       title: 'Venture',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Constants.showError(context,
+                            'Early Acess App , Features will be available Soon...');
                       },
                     ),
                     Divider(
@@ -211,12 +204,14 @@ class MenuWidget extends StatelessWidget {
                     ),
                     CustomListTile1(
                       icon: Icons.description_outlined,
-                      title: 'Terms & Privacy Policies',
+                      title: 'Terms & Privacy Policy',
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TermsAndPrivacy1(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(
@@ -226,10 +221,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.headset_mic_outlined,
                       title: 'Support',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Constants.showError(context,
+                            'Early Acess App , Features will be available Soon...');
                       },
                     ),
                     SizedBox(
@@ -239,10 +232,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.help_outline_outlined,
                       title: 'Help',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Constants.showError(context,
+                            'Early Acess App , Features will be available Soon...');
                       },
                     ),
                     SizedBox(
@@ -252,10 +243,8 @@ class MenuWidget extends StatelessWidget {
                       icon: Icons.play_circle_outline,
                       title: 'Demo',
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ComingSoon()));
+                        Constants.showError(context,
+                            'Early Acess App , Features will be available Soon...');
                       },
                     ),
                   ],

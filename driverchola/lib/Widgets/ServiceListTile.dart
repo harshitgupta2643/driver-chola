@@ -1,3 +1,4 @@
+import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:flutter/material.dart';
 
 class ServiceListTile extends StatelessWidget {
@@ -43,7 +44,10 @@ class ServiceListTile extends StatelessWidget {
                 MaterialStatePropertyAll(value ? Colors.green : Colors.red),
             splashRadius: size.width * 0.1,
             value: value,
-            onChanged: onChanged,
+            onChanged: (value) {
+              Constants.showError(context,
+                  'Early Acess App , Features will be available Soon...');
+            },
           ),
         ),
       ),

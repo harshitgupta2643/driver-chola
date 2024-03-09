@@ -159,28 +159,28 @@ class _EmailVerifyState extends State<EmailVerify> {
                   SizedBox(
                     height: size.height * 0.02,
                   ),
-                  _showResendButton
-                      ? AgreeButton(
-                          onPressed: resendOTP,
-                          buttonText: "Resend OTP",
-                          padding: 0.6,
-                        )
-                      : Text(
-                          "You can resend OTP in $_resendSeconds sec(s)",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: size.shortestSide * 0.05,
-                            color: Colors.black,
-                          ),
-                        ),
+                  // _showResendButton
+                  //     ? AgreeButton(
+                  //         onPressed: resendOTP,
+                  //         buttonText: "Resend OTP",
+                  //         padding: 0.6,
+                  //       )
+                  //     : Text(
+                  //         "You can resend OTP in $_resendSeconds sec(s)",
+                  //         overflow: TextOverflow.ellipsis,
+                  //         maxLines: 1,
+                  //         textAlign: TextAlign.center,
+                  //         style: TextStyle(
+                  //           fontWeight: FontWeight.w600,
+                  //           fontSize: size.shortestSide * 0.05,
+                  //           color: Colors.black,
+                  //         ),
+                  //       ),
                   SizedBox(
                     height: size.height * 0.02,
                   ),
                   AgreeButton(
-                    buttonText: "Verify OTP",
+                    buttonText: "Confirm",
                     onPressed: () async {
                       try {
                         Map<String, dynamic> result = await verifyEmail();
@@ -193,17 +193,64 @@ class _EmailVerifyState extends State<EmailVerify> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => EnterDetails(
-                              jwt : data['jwt'] as String,
+                              jwt: data['jwt'] as String,
                             ),
                           ),
                         );
                       } catch (e) {
                         print('Exception: $e');
                       }
-                      
                     },
-                    padding: 0.8,
-                  )
+                    padding: 0.7,
+                  ),
+                  SizedBox(
+                    height: size.height * 0.01,
+                  ),
+                  _showResendButton
+                      ? Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            child: TextButton(
+                              onPressed: resendOTP,
+                              child: Text(
+                                "Resend OTP",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: size.shortestSide * 0.04,
+                                  color: Color(0xFF000000),
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                              // padding: 0.6,
+                            ),
+                          ),
+                        )
+                      : Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            child: Text(
+                              "Resend OTP $_resendSeconds sec(s)",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: size.shortestSide * 0.04,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
                 ],
               ),
             ),

@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:chola_driver_flutter/Constants/Constants.dart';
+import 'package:chola_driver_flutter/Pages/AddDocument.dart';
 import 'package:chola_driver_flutter/Pages/ComingSoon.dart';
+import 'package:chola_driver_flutter/Pages/LoginPage2.dart';
 import 'package:chola_driver_flutter/Pages/PhoneVerification.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
@@ -183,13 +185,13 @@ class _LoginPage1State extends State<LoginPage1> {
                         flex: 2,
                         child: Field(
                           labelText: "",
-                          hintText: "Enter Your Phone Number",
+                          hintText: "Phone Number",
                           vertical: 0.03,
                           horizontal: 0.04,
                           fieldController: phoneNumberController,
                           focusNode: _phoneNumberFocusNode,
-                          // maxLength: 10,
-                          prefixText: dialCode + " ",
+                          maxLength: 10,
+                          // prefixText: dialCode + " ",
                           keyboardType: TextInputType.number,
                           snackbarText: '* Required',
                         ),
@@ -206,46 +208,45 @@ class _LoginPage1State extends State<LoginPage1> {
                         Constants.showError(
                             context, 'Phone Number is required');
                       } else {
-                        setState(() {
-                          isLoading = true;
-                        });
+                        // setState(() {
+                        //   isLoading = true;
+                        // });
                         try {
-                          await FirebaseAuth.instance.verifyPhoneNumber(
-                            phoneNumber: dialCode + phoneNumberController.text,
-                            verificationCompleted:
-                                (PhoneAuthCredential credential) {},
-                            verificationFailed: (FirebaseAuthException e) {},
-                            codeSent: (String verificationId,
-                                int? resendToken) async {
-                              Map<String, dynamic> result =
-                                  await createPhoneNumber(
-                                phoneNumberController.text,
-                                dialCode,
-                              );
-                              setState(() {
-                                data = result;
-                              });
-                              print(data['message']);
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PhoneVerify(
-                                    verificationId: verificationId,
-                                    phoneNumber: dialCode +
-                                        " " +
-                                        phoneNumberController.text,
-                                    alreadyExist: data['alreadyExist'] as bool,
-                                    jwt: data['jwt'] as String,
-                                  ),
-                                ),
-                              );
-                              setState(() {
-                                isLoading = false;
-                              });
-                            },
-                            codeAutoRetrievalTimeout: (verificationId) {},
+                          // await FirebaseAuth.instance.verifyPhoneNumber(
+                          //   phoneNumber: dialCode + phoneNumberController.text,
+                          //   verificationCompleted:
+                          //       (PhoneAuthCredential credential) {},
+                          //   verificationFailed: (FirebaseAuthException e) {},
+                          //   codeSent: (String verificationId,
+                          //       int? resendToken) async {
+                          Map<String, dynamic> result = await createPhoneNumber(
+                            phoneNumberController.text,
+                            dialCode,
                           );
+                          setState(() {
+                            data = result;
+                            Constants.phoneNo = phoneNumberController.text;
+                          });
+                          print(data['message']);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PhoneVerify(
+                                // verificationId: verificationId,
+                                phoneNumber:
+                                    dialCode + " " + phoneNumberController.text,
+                                alreadyExist: data['alreadyExist'] as bool,
+                                jwt: data['jwt'] as String,
+                              ),
+                            ),
+                          );
+                          setState(() {
+                            isLoading = false;
+                          });
+                          //   },
+                          //   codeAutoRetrievalTimeout: (verificationId) {},
+                          // );
                         } catch (e) {
                           setState(() {
                             isLoading = false;
@@ -315,7 +316,7 @@ class _LoginPage1State extends State<LoginPage1> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ComingSoon(),
+                          builder: (context) => AddDocument(),
                         ),
                       );
                     },

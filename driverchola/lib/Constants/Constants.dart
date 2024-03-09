@@ -8,6 +8,8 @@ class Constants {
     'https://www.wordstream.com/wp-content/uploads/2021/07/persuasive-ads-street-easy.jpg',
   ];
   static const List<String> countryCodes = ['+91'];
+  static String firstName = '';
+  static String phoneNo = '';
   static const List<String> vehicleCompany = [
     'Maruti-Suzuki',
     'Hyundai',

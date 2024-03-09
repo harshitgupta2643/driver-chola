@@ -224,6 +224,7 @@ class _EnterDetailsState extends State<EnterDetails> {
 
                             setState(() {
                               data = result;
+                              Constants.firstName = _firstnameController.text;
                             });
                             print(data['phoneNoVerified']);
 
@@ -231,7 +232,7 @@ class _EnterDetailsState extends State<EnterDetails> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => EnterDetails1(
-                                  jwt : data['jwt'] as String,
+                                  jwt: data['jwt'] as String,
                                 ),
                               ),
                             );

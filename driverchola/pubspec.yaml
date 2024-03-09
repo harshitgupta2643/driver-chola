@@ -44,6 +44,8 @@ dependencies:
   compass_icon: ^1.0.4
   local_auth: ^2.2.0
   google_sign_in: ^6.2.1
+  path_provider: ^2.1.2
+  dotted_dashed_line: ^0.0.3
 
 
 dev_dependencies:
@@ -65,6 +67,7 @@ dev_dependencies:
   http: ^1.2.0
   path: ^1.8.3
   sms_autofill: ^2.3.1
+  shared_preferences: ^2.2.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
