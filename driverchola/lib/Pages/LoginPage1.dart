@@ -209,17 +209,17 @@ class _LoginPage1State extends State<LoginPage1> {
                         Constants.showError(
                             context, 'Phone Number is required');
                       } else {
-                        // setState(() {
-                        //   isLoading = true;
-                        // });
+                        setState(() {
+                          isLoading = true;
+                        });
                         try {
-                          // await FirebaseAuth.instance.verifyPhoneNumber(
-                          //   phoneNumber: dialCode + phoneNumberController.text,
-                          //   verificationCompleted:
-                          //       (PhoneAuthCredential credential) {},
-                          //   verificationFailed: (FirebaseAuthException e) {},
-                          //   codeSent: (String verificationId,
-                          //       int? resendToken) async {
+                          await FirebaseAuth.instance.verifyPhoneNumber(
+                            phoneNumber: dialCode + phoneNumberController.text,
+                            verificationCompleted:
+                                (PhoneAuthCredential credential) {},
+                            verificationFailed: (FirebaseAuthException e) {},
+                            codeSent: (String verificationId,
+                                int? resendToken) async {
                           Map<String, dynamic> result = await createPhoneNumber(
                             phoneNumberController.text,
                             dialCode,
@@ -234,7 +234,7 @@ class _LoginPage1State extends State<LoginPage1> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => PhoneVerify(
-                                // verificationId: verificationId,
+                                verificationId: verificationId,
                                 phoneNumber:
                                     dialCode + " " + phoneNumberController.text,
                                 alreadyExist: data['alreadyExist'] as bool,
@@ -245,9 +245,9 @@ class _LoginPage1State extends State<LoginPage1> {
                           setState(() {
                             isLoading = false;
                           });
-                          //   },
-                          //   codeAutoRetrievalTimeout: (verificationId) {},
-                          // );
+                            },
+                            codeAutoRetrievalTimeout: (verificationId) {},
+                          );
                         } catch (e) {
                           setState(() {
                             isLoading = false;

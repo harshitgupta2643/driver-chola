@@ -325,9 +325,3 @@ class _TermsAndPrivacy1State extends State<TermsAndPrivacy1> {
     );
   }
 }
-
-// void main() {
-//   runApp(MaterialApp(
-//     home: TermsAndPrivacy1(),
-//   ));
-// }

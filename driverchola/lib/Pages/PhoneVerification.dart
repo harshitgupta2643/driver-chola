@@ -13,7 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class PhoneVerify extends StatefulWidget {
   final String phoneNumber;
-  // final String verificationId;
+  final String verificationId;
   final bool alreadyExist;
   final String jwt;
   PhoneVerify({
@@ -21,7 +21,7 @@ class PhoneVerify extends StatefulWidget {
     required this.phoneNumber,
     required this.alreadyExist,
     required this.jwt,
-    // required this.verificationId,
+    required this.verificationId,
   }) : super(key: key);
 
   @override
@@ -177,34 +177,35 @@ class _PhoneVerifyState extends State<PhoneVerify> {
                     buttonText: "Confirm",
                     onPressed: () async {
                       try {
-                        // PhoneAuthCredential credential =
-                        //     PhoneAuthProvider.credential(
-                        //   verificationId: widget.verificationId,
-                        //   smsCode: _otpController.text.toString(),
-                        // );
-                        // UserCredential userCredential = await FirebaseAuth
-                        //     .instance
-                        //     .signInWithCredential(credential);
-                        // if (userCredential.user != null) {
-                        Map<String, dynamic> result = await verifyPhoneNumber();
-                        setState(() {
-                          data = result;
-                        });
-                        (widget.alreadyExist)
-                            ? Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomePage(),
-                                ),
-                              )
-                            : Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      LoginPage2(jwt: data['jwt'] as String),
-                                ),
-                              );
-                        // }
+                        PhoneAuthCredential credential =
+                            PhoneAuthProvider.credential(
+                          verificationId: widget.verificationId,
+                          smsCode: _otpController.text.toString(),
+                        );
+                        UserCredential userCredential = await FirebaseAuth
+                            .instance
+                            .signInWithCredential(credential);
+                        if (userCredential.user != null) {
+                          Map<String, dynamic> result =
+                              await verifyPhoneNumber();
+                          setState(() {
+                            data = result;
+                          });
+                          (widget.alreadyExist)
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(),
+                                  ),
+                                )
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        LoginPage2(jwt: data['jwt'] as String),
+                                  ),
+                                );
+                        }
                       } catch (e) {
                         print('Exception: $e');
                       }
