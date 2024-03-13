@@ -37,13 +37,13 @@ class _LivePhotoState extends State<LivePhoto> {
     var size = MediaQuery.of(context).size;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     return Padding(
-      padding:  EdgeInsets.only(
+      padding: EdgeInsets.only(
         top: statusBarHeight,
       ),
       child: Scaffold(
         appBar: CustomAppBar(
           preferredHeight: size.height * 0.08,
-          title: "Add Live Photo",
+          title: "Live Photo",
         ),
         backgroundColor: Constants.themeColor,
         body: SizedBox(
@@ -83,6 +83,17 @@ class _LivePhotoState extends State<LivePhoto> {
                 ),
                 child: Column(
                   children: [
+                    Text(
+                      '(Click Again to reselect)',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: size.shortestSide * 0.027,
+                        color: Colors.black,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                     if (_imageFile != null)
                       GestureDetector(
                         onTap: () {
@@ -102,8 +113,8 @@ class _LivePhotoState extends State<LivePhoto> {
                           ),
                           child: Image.file(
                             _imageFile!,
-                            // width: size.width * 0.8,
-                            // height: size.height * 0.3,
+                            width: size.width * 0.8,
+                            height: size.height * 0.3,
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -157,7 +168,7 @@ class _LivePhotoState extends State<LivePhoto> {
             child: Column(
               children: [
                 AgreeButton(
-                  buttonText: "Okay",
+                  buttonText: "Save & Continue",
                   onPressed: () {
                     if (_imageFile == null) {
                       Constants.showError(

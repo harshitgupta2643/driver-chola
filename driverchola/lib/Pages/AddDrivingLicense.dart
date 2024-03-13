@@ -22,10 +22,16 @@ class DrivingLicense extends StatefulWidget {
 class _DrivingLicenseState extends State<DrivingLicense> {
   TextEditingController licenseController = TextEditingController();
   TextEditingController expiryController = TextEditingController();
-  bool isVerify = false;
   DateTime? selectedDate;
+  bool isVerify = false;
   File? _frontImageFile;
   File? _backImageFile;
+  FocusNode _drivingFocus = FocusNode();
+  @override
+  void initState() {
+    super.initState();
+    _drivingFocus.requestFocus();
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -48,13 +54,13 @@ class _DrivingLicenseState extends State<DrivingLicense> {
     var size = MediaQuery.of(context).size;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     return Padding(
-      padding:  EdgeInsets.only(
+      padding: EdgeInsets.only(
         top: statusBarHeight,
       ),
       child: Scaffold(
         appBar: CustomAppBar(
           preferredHeight: size.height * 0.08,
-          title: "Add License",
+          title: "Driving License",
         ),
         backgroundColor: Constants.themeColor,
         body: SizedBox(
@@ -88,7 +94,8 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                   horizontal: size.height * 0.02,
                 ),
                 child: Field(
-                  labelText: "License Number",
+                  labelText: "",
+                  focusNode: _drivingFocus,
                   hintText: "Enter Your License Number",
                   vertical: 0.04,
                   horizontal: 0.04,
@@ -125,7 +132,7 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                     enabled: true,
                     filled: true,
                     fillColor: Colors.white,
-                    labelText: "Expiry Date",
+                    labelText: "",
                     labelStyle: TextStyle(
                       // color: widget.color ?? ThemeData.light().colorScheme.primary,
                       fontWeight: FontWeight.w900,
@@ -135,7 +142,8 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                     // icon: widget.icon,
                     contentPadding: EdgeInsets.symmetric(
                       vertical: MediaQuery.of(context).size.shortestSide * 0.03,
-                      horizontal: MediaQuery.of(context).size.shortestSide * 0.04,
+                      horizontal:
+                          MediaQuery.of(context).size.shortestSide * 0.04,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
@@ -153,13 +161,24 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                 height: size.height * 0.02,
               ),
               Text(
-                'Front side of your Driving License',
+                'Driving License Front',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontSize: size.shortestSide * 0.045,
+                  fontSize: size.shortestSide * 0.055,
                   color: Colors.black,
+                ),
+              ),
+              Text(
+                '(Click Again to reselect)',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: size.shortestSide * 0.027,
+                  color: Colors.black,
+                  fontStyle: FontStyle.italic,
                 ),
               ),
               SizedBox(
@@ -181,13 +200,24 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                 height: size.height * 0.02,
               ),
               Text(
-                'Back side of your Driving License',
+                'Driving License Back',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontSize: size.shortestSide * 0.045,
+                  fontSize: size.shortestSide * 0.055,
                   color: Colors.black,
+                ),
+              ),
+              Text(
+                '(Click Again to reselect)',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: size.shortestSide * 0.027,
+                  color: Colors.black,
+                  fontStyle: FontStyle.italic,
                 ),
               ),
               SizedBox(
@@ -205,71 +235,75 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                   },
                 ),
               ),
+              SizedBox(
+                height: size.height * 0.02,
+              ),
+              SizedBox(
+                height: size.height * 0.15,
+                child: Center(
+                  child: Column(
+                    children: [
+                      AgreeButton(
+                        buttonText: "Save & Continue",
+                        onPressed: () {
+                          if (licenseController.length > 16) {
+                            Constants.showError(
+                              context,
+                              "Please enter a valid License number. License numbers in India are up to 16 characters long.",
+                            );
+                          } else if (_frontImageFile == null) {
+                            Constants.showError(
+                              context,
+                              "Please upload a valid Front Image of your driving license .",
+                            );
+                          } else if (_backImageFile == null) {
+                            Constants.showError(
+                              context,
+                              "Please upload a valid Back Image of your driving license .",
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddDocument(
+                                  isVerifyPermanentAddress: true,
+                                  isVerifyAadhar: true,
+                                  isVerifyDriverLicense: true,
+                                  isVerifyPan: true,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        padding: 0.7,
+                      ),
+                      SizedBox(
+                        height: size.height * 0.01,
+                      ),
+                      Expanded(
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          double fontSize = constraints.maxWidth * 0.04;
+                          return Text(
+                            'Upload all Documents to start earning with CHOLA.',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: fontSize,
+                              color: Colors.black,
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ])),
           ),
         ),
-        bottomNavigationBar: SizedBox(
-          height: size.height * 0.15,
-          child: Center(
-            child: Column(
-              children: [
-                AgreeButton(
-                  buttonText: "Okay",
-                  onPressed: () {
-                    if (licenseController.length > 16) {
-                      Constants.showError(
-                        context,
-                        "Please enter a valid License number. License numbers in India are up to 16 characters long.",
-                      );
-                    } else if (_frontImageFile == null) {
-                      Constants.showError(
-                        context,
-                        "Please upload a valid Front Image of your driving license .",
-                      );
-                    } else if (_backImageFile == null) {
-                      Constants.showError(
-                        context,
-                        "Please upload a valid Back Image of your driving license .",
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddDocument(
-                            isVerifyPermanentAddress: true,
-                            isVerifyAadhar: true,
-                            isVerifyDriverLicense: true,
-                            isVerifyPan: true,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  padding: 0.7,
-                ),
-                SizedBox(
-                  height: size.height * 0.01,
-                ),
-                Expanded(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    double fontSize = constraints.maxWidth * 0.04;
-                    return Text(
-                      'Upload all Documents to start earning with CHOLA.',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: fontSize,
-                        color: Colors.black,
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // bottomNavigationBar:
       ),
     );
   }

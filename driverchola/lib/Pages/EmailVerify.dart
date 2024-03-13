@@ -5,13 +5,19 @@ import 'package:chola_driver_flutter/Pages/EnterDetails.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 import 'package:flutter/material.dart';
+import 'package:email_otp/email_otp.dart';
 import 'package:pinput/pinput.dart';
 import 'package:http/http.dart' as http;
 
 class EmailVerify extends StatefulWidget {
   final String email;
   final String jwt;
-  EmailVerify({Key? key, required this.email, required this.jwt})
+  final EmailOTP myauth;
+  EmailVerify(
+      {Key? key,
+      required this.email,
+      required this.jwt,
+      required this.myauth})
       : super(key: key);
 
   @override
@@ -20,8 +26,11 @@ class EmailVerify extends StatefulWidget {
 
 class _EmailVerifyState extends State<EmailVerify> {
   Timer? _resendTimer;
-  int _resendSeconds = 30;
+  int _resendSeconds = 120;
   bool _showResendButton = false;
+
+  TextEditingController otp = new TextEditingController();
+  // EmailOTP myauth = EmailOTP();
   final _emailFormKey = GlobalKey<FormState>();
   Map<String, dynamic> data = {};
   verifyEmail() async {
@@ -76,7 +85,7 @@ class _EmailVerifyState extends State<EmailVerify> {
   void resendOTP() {
     // Resend OTP logic
     setState(() {
-      _resendSeconds = 30;
+      _resendSeconds = 120;
       _showResendButton = false;
     });
     startResendTimer();
@@ -119,7 +128,7 @@ class _EmailVerifyState extends State<EmailVerify> {
       ),
       child: Scaffold(
         appBar: CustomAppBar(
-          title: "Enter OTP",
+          title: "Email OTP",
           preferredHeight: MediaQuery.of(context).size.height * 0.08,
         ),
         backgroundColor: Constants.themeColor,
@@ -154,6 +163,7 @@ class _EmailVerifyState extends State<EmailVerify> {
                       length: 6,
                       autofocus: true,
                       isCursorAnimationEnabled: true,
+                      controller: otp,
                     ),
                   ),
                   SizedBox(
@@ -183,20 +193,45 @@ class _EmailVerifyState extends State<EmailVerify> {
                     buttonText: "Confirm",
                     onPressed: () async {
                       try {
-                        Map<String, dynamic> result = await verifyEmail();
+                        if (await widget.myauth.verifyOTP(otp: otp.text) == true) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("OTP is verified"),
+                          ));
+                          Map<String, dynamic> result = await verifyEmail();
 
-                        setState(() {
-                          data = result;
-                        });
-                        print(data['phoneNoVerified']);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EnterDetails(
-                              jwt: data['jwt'] as String,
+                          setState(() {
+                            data = result;
+                          });
+                          print(data['phoneNoVerified']);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EnterDetails(
+                                jwt: data['jwt'] as String,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Invalid OTP"),
+                          ));
+                        }
+                        // Map<String, dynamic> result = await verifyEmail();
+
+                        // setState(() {
+                        //   data = result;
+                        // });
+                        // print(data['phoneNoVerified']);
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => EnterDetails(
+                        //       jwt: data['jwt'] as String,
+                        //     ),
+                        //   ),
+                        // );
                       } catch (e) {
                         print('Exception: $e');
                       }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
@@ -5,6 +7,7 @@ import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 // import 'package:chola_driver_flutter/Widgets/CustomDropDown1.dart';
 // import 'package:chola_driver_flutter/Widgets/DropDown.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
+import 'package:chola_driver_flutter/Widgets/ImagePicker.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
@@ -26,6 +29,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
   TextEditingController licensePlateController = TextEditingController();
   bool isVerify = false;
   DateTime? selectedDate;
+  File? _vehicleImageFile;
   // String dropdownValue1 = 'Item 1';
 
   Future<void> _selectDate(BuildContext context) async {
@@ -52,13 +56,13 @@ class _VehicleDetailsState extends State<VehicleDetails> {
     String dropdownValue1 = 'Maruti-Suzuki';
 
     return Padding(
-      padding:  EdgeInsets.only(
+      padding: EdgeInsets.only(
         top: statusBarHeight,
       ),
       child: Scaffold(
         appBar: CustomAppBar(
           preferredHeight: size.height * 0.08,
-          title: "Add Vehicle Details",
+          title: "Vehicle Details",
         ),
         backgroundColor: Constants.themeColor,
         body: SizedBox(
@@ -217,7 +221,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       hintText: 'Enter Vehicle Year',
                       // icon: widget.icon,
                       contentPadding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.shortestSide * 0.03,
+                        vertical:
+                            MediaQuery.of(context).size.shortestSide * 0.03,
                         horizontal:
                             MediaQuery.of(context).size.shortestSide * 0.04,
                       ),
@@ -291,85 +296,137 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                     fieldController: licensePlateController,
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-        bottomNavigationBar: SizedBox(
-          height: size.height * 0.15,
-          child: Center(
-            child: Column(
-              children: [
-                AgreeButton(
-                  buttonText: "Okay",
-                  onPressed: () {
-                    if (vehicleTypeController.length == 0) {
-                      Constants.showError(
-                        context,
-                        "Please Enter Vehicle Type",
-                      );
-                    } else if (vehicleModelController.length == 0) {
-                      Constants.showError(
-                        context,
-                        "Please Enter Vehicle Model",
-                      );
-                    } else if (vehicleYearController.length == 0) {
-                      Constants.showError(
-                        context,
-                        "Please Enter Valid Vehicle Year",
-                      );
-                    } else if (vehicleColorController.length == 0) {
-                      Constants.showError(
-                        context,
-                        "Please Enter Vehicle Color",
-                      );
-                    } else if (licensePlateController.length == 0) {
-                      Constants.showError(
-                        context,
-                        "Please Enter License Plate Number",
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddDocument(
-                            isVerifyAadhar: true,
-                            isVerifyPan: true,
-                            isVerifyDriverLicense: true,
-                            isVerifyPermanentAddress: true,
-                            isVerifyPhoto: true,
-                            isVerifyVehicle: true,
-                            isVerifyBankAccount: true,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  padding: 0.7,
+                SizedBox(
+                  height: size.height * 0.01,
+                ),
+                Text(
+                  '\t\tPicture of Your Vehicle',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: size.shortestSide * 0.05,
+                    color: Colors.black,
+                  ),
                 ),
                 SizedBox(
                   height: size.height * 0.01,
                 ),
-                Expanded(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    double fontSize = constraints.maxWidth * 0.04;
-                    return Text(
-                      'Upload all Documents to start earning with CHOLA.',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: fontSize,
-                        color: Colors.black,
-                      ),
-                    );
-                  }),
+                Text(
+                  '(Click Again to reselect)',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: size.shortestSide * 0.027,
+                    color: Colors.black,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: size.width * 0.04,
+                  ),
+                  child: ImagePickerButton(
+                    onImagePicked: (file) {
+                      setState(() {
+                        _vehicleImageFile = file;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                SizedBox(
+                  height: size.height * 0.15,
+                  child: Center(
+                    child: Column(
+                      children: [
+                        AgreeButton(
+                          buttonText: "Save & Continue",
+                          onPressed: () {
+                            if (vehicleTypeController.length == 0) {
+                              Constants.showError(
+                                context,
+                                "Please Enter Vehicle Type",
+                              );
+                            } else if (vehicleModelController.length == 0) {
+                              Constants.showError(
+                                context,
+                                "Please Enter Vehicle Model",
+                              );
+                            } else if (vehicleYearController.length == 0) {
+                              Constants.showError(
+                                context,
+                                "Please Enter Valid Vehicle Year",
+                              );
+                            } else if (vehicleColorController.length == 0) {
+                              Constants.showError(
+                                context,
+                                "Please Enter Vehicle Color",
+                              );
+                            } else if (licensePlateController.length == 0) {
+                              Constants.showError(
+                                context,
+                                "Please Enter License Plate Number",
+                              );
+                            } else if (_vehicleImageFile == null) {
+                              Constants.showError(
+                                context,
+                                "Please Attach/Take Picture of Vehicle",
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddDocument(
+                                    isVerifyAadhar: true,
+                                    isVerifyPan: true,
+                                    isVerifyDriverLicense: true,
+                                    isVerifyPermanentAddress: true,
+                                    isVerifyPhoto: true,
+                                    isVerifyVehicle: true,
+                                    isVerifyBankAccount: true,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          padding: 0.7,
+                        ),
+                        SizedBox(
+                          height: size.height * 0.01,
+                        ),
+                        Expanded(
+                          child: LayoutBuilder(builder: (context, constraints) {
+                            double fontSize = constraints.maxWidth * 0.04;
+                            return Text(
+                              'Upload all Documents to start earning with CHOLA.',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: fontSize,
+                                color: Colors.black,
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
         ),
+        // bottomNavigationBar:
       ),
     );
   }

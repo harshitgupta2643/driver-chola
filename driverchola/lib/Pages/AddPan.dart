@@ -23,18 +23,26 @@ class _PanCardState extends State<PanCard> {
   bool isVerify = false;
   File? _frontImageFile;
   File? _backImageFile;
+  FocusNode _panFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _panFocus.requestFocus();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     return Padding(
-      padding:  EdgeInsets.only(
+      padding: EdgeInsets.only(
         top: statusBarHeight,
       ),
       child: Scaffold(
         appBar: CustomAppBar(
           preferredHeight: size.height * 0.08,
-          title: "Add Pan Card",
+          title: "Pan Card",
         ),
         backgroundColor: Constants.themeColor,
         body: SizedBox(
@@ -69,7 +77,8 @@ class _PanCardState extends State<PanCard> {
                       horizontal: size.height * 0.02,
                     ),
                     child: Field(
-                      labelText: "Pan Number",
+                      labelText: "",
+                      focusNode: _panFocus,
                       hintText: "Enter Your Pan Number",
                       vertical: 0.04,
                       horizontal: 0.04,
@@ -82,13 +91,24 @@ class _PanCardState extends State<PanCard> {
                     height: size.height * 0.02,
                   ),
                   Text(
-                    'Front side of your PAN',
+                    'PAN Card Front',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: size.shortestSide * 0.045,
+                      fontSize: size.shortestSide * 0.055,
                       color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    '(Click Again to reselect)',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: size.shortestSide * 0.027,
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                   SizedBox(
@@ -110,13 +130,24 @@ class _PanCardState extends State<PanCard> {
                     height: size.height * 0.02,
                   ),
                   Text(
-                    'Back side of your PAN',
+                    'PAN Card Back',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: size.shortestSide * 0.045,
+                      fontSize: size.shortestSide * 0.055,
                       color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    '(Click Again to reselect)',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: size.shortestSide * 0.027,
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                   SizedBox(
@@ -134,75 +165,80 @@ class _PanCardState extends State<PanCard> {
                       },
                     ),
                   ),
+                  SizedBox(
+                    height: size.height * 0.02,
+                  ),
+                  SizedBox(
+                    height: size.height * 0.15,
+                    child: Center(
+                      child: Column(
+                        children: [
+                          AgreeButton(
+                            buttonText: "Save & Continue",
+                            onPressed: () {
+                              if (panCardController.length != 10) {
+                                Constants.showError(
+                                  context,
+                                  "Please enter a valid PAN number. \nPAN numbers in India are 10 characters long.",
+                                );
+                              } else if (_frontImageFile == null) {
+                                Constants.showError(
+                                  context,
+                                  "Please Attach/Take Picture of Front side of PAN Card",
+                                );
+                              } else if (_backImageFile == null) {
+                                Constants.showError(
+                                  context,
+                                  "Please Attach/Take Picture of Back side of PAN Card",
+                                );
+                              } else {
+                                setState(() {
+                                  isVerify = true;
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddDocument(
+                                      isVerifyPermanentAddress: true,
+                                      isVerifyAadhar: isVerify,
+                                      isVerifyPan: isVerify,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            padding: 0.7,
+                          ),
+                          SizedBox(
+                            height: size.height * 0.01,
+                          ),
+                          Expanded(
+                            child:
+                                LayoutBuilder(builder: (context, constraints) {
+                              double fontSize = constraints.maxWidth * 0.04;
+                              return Text(
+                                'Upload all Documents to start earning with CHOLA.',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: fontSize,
+                                  color: Colors.black,
+                                ),
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
-        bottomNavigationBar: SizedBox(
-          height: size.height * 0.15,
-          child: Center(
-            child: Column(
-              children: [
-                AgreeButton(
-                  buttonText: "Okay",
-                  onPressed: () {
-                    if (panCardController.length != 10) {
-                      Constants.showError(
-                        context,
-                        "Please enter a valid PAN number. \nPAN numbers in India are 10 characters long.",
-                      );
-                    } else if (_frontImageFile == null) {
-                      Constants.showError(
-                        context,
-                        "Please select the Front image of your PAN card.",
-                      );
-                    } else if (_backImageFile == null) {
-                      Constants.showError(
-                        context,
-                        "Please select the Back image of your PAN card.",
-                      );
-                    } else {
-                      setState(() {
-                        isVerify = true;
-                      });
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddDocument(
-                            isVerifyPermanentAddress: true,
-                            isVerifyAadhar: isVerify,
-                            isVerifyPan: isVerify,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  padding: 0.7,
-                ),
-                SizedBox(
-                  height: size.height * 0.01,
-                ),
-                Expanded(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    double fontSize = constraints.maxWidth * 0.04;
-                    return Text(
-                      'Upload all Documents to start earning with CHOLA.',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: fontSize,
-                        color: Colors.black,
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // bottomNavigationBar:
       ),
     );
   }

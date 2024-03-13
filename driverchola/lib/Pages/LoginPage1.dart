@@ -5,6 +5,7 @@ import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
 import 'package:chola_driver_flutter/Pages/ComingSoon.dart';
 import 'package:chola_driver_flutter/Pages/LoginPage2.dart';
+import 'package:chola_driver_flutter/Pages/PartnerPreForm.dart';
 import 'package:chola_driver_flutter/Pages/PhoneVerification.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
@@ -251,7 +252,7 @@ class _LoginPage1State extends State<LoginPage1> {
                           setState(() {
                             isLoading = false;
                           });
-                          Constants.showError(context, 'Exception: $e');
+                          print('Exception: $e');
                         }
                       }
                     },
@@ -316,9 +317,11 @@ class _LoginPage1State extends State<LoginPage1> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AddDocument(),
+                          builder: (context) => PartnerPreForm(),
                         ),
                       );
+                      // Constants.showError(context,
+                      //     'Early Acess App , Features will be available Soon...');
                     },
                     padding: 0.9,
                     fillColor: [Colors.white, Colors.white],
@@ -338,12 +341,14 @@ class _LoginPage1State extends State<LoginPage1> {
                     buttonText: "Continue With Google",
                     fontSize: size.shortestSide * 0.05,
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ComingSoon(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ComingSoon(),
+                      //   ),
+                      // );
+                      Constants.showError(context,
+                          'Early Acess App , Features will be available Soon...');
                     },
                     padding: 0.9,
                     fillColor: [Colors.white, Colors.white],

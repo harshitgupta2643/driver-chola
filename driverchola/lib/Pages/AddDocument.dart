@@ -157,7 +157,7 @@ class _AddDocumentState extends State<AddDocument> {
                 children: [
                   DocumentButton(
                     isEnable: true,
-                    label: 'Permanent Address',
+                    label: 'Residence Address',
                     onPressed: () {
                       Navigator.push(
                         context,

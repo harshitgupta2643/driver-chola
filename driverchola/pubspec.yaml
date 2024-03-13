@@ -68,6 +68,9 @@ dev_dependencies:
   path: ^1.8.3
   sms_autofill: ^2.3.1
   shared_preferences: ^2.2.2
+  country_state_city_pro: ^0.0.6
+  dob_input_field: ^2.0.0
+  email_otp: ^2.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

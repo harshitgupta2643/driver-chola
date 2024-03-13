@@ -8,6 +8,7 @@ import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:flutter/material.dart';
+import 'package:email_otp/email_otp.dart';
 import 'package:http/http.dart' as http;
 
 class LoginPage2 extends StatefulWidget {
@@ -19,7 +20,8 @@ class LoginPage2 extends StatefulWidget {
 }
 
 class _LoginPage2State extends State<LoginPage2> {
-  TextEditingController emailController = TextEditingController();
+  TextEditingController email = new TextEditingController();
+  EmailOTP myauth = EmailOTP();
   FocusNode _emailFocusNode = FocusNode();
   final _emailFormKey = GlobalKey<FormState>();
   Map<String, dynamic> data = {};
@@ -111,7 +113,7 @@ class _LoginPage2State extends State<LoginPage2> {
                       return null;
                     },
                     // onChanged: (value) => _isValidEmail,
-                    fieldController: emailController,
+                    fieldController: email,
                     focusNode: _emailFocusNode,
                   ),
                   SizedBox(
@@ -122,24 +124,61 @@ class _LoginPage2State extends State<LoginPage2> {
                     onPressed: () async {
                       try {
                         if (_emailFormKey.currentState!.validate()) {
-                          Map<String, dynamic> result = await createEmail(
-                            emailController.text,
+                          myauth.setConfig(
+                            appEmail: "cholachariots@gmail.com",
+                            appName: "Chola Chariots",
+                            userEmail: email.text,
+                            otpLength: 6,
+                            otpType: OTPType.digitsOnly,
                           );
+                          if (await myauth.sendOTP() == true) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("OTP has been sent"),
+                            ));
+                            Map<String, dynamic> result = await createEmail(
+                              email.text,
+                            );
 
-                          setState(() {
-                            data = result;
-                          });
-                          print(data['phoneNoVerified']);
+                            setState(() {
+                              data = result;
+                            });
+                            print(data['phoneNoVerified']);
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EmailVerify(
-                                email: emailController.text,
-                                jwt: data['jwt'] as String,
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EmailVerify(
+                                  email: email.text,
+                                  jwt: data['jwt'] as String,
+                                  myauth: myauth,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Oops, OTP send failed"),
+                            ));
+                          }
+                          // Map<String, dynamic> result = await createEmail(
+                          //   email.text,
+                          // );
+
+                          // setState(() {
+                          //   data = result;
+                          // });
+                          // print(data['phoneNoVerified']);
+
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => EmailVerify(
+                          //       email: email.text,
+                          //       jwt: data['jwt'] as String,
+                          //     ),
+                          //   ),
+                          // );
                         }
                       } catch (e) {
                         print('Exception: $e');
@@ -155,19 +194,19 @@ class _LoginPage2State extends State<LoginPage2> {
                   SizedBox(
                     height: size.height * 0.03,
                   ),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      'By continuing you may receive an SMS for verification.\nStandard Message and data rates may apply.',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontSize: size.shortestSide * 0.05,
-                      ),
-                    ),
-                  ),
+                  // FittedBox(
+                  //   fit: BoxFit.scaleDown,
+                  //   child: Text(
+                  //     'By continuing you may receive an Email for verification.\nStandard Message and data rates may apply.',
+                  //     overflow: TextOverflow.ellipsis,
+                  //     maxLines: 2,
+                  //     style: TextStyle(
+                  //       color: Colors.black,
+                  //       fontWeight: FontWeight.w400,
+                  //       fontSize: size.shortestSide * 0.05,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

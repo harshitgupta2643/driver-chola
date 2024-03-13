@@ -41,6 +41,7 @@ class _PartnerPreFormState extends State<PartnerPreForm> {
                     Color(0xff0C851F),
                     Color(0xff801A13),
                   ],
+                  preferredSizeHeight: statusBarHeight + size.height * 0.08,
                 ),
               ],
             ),

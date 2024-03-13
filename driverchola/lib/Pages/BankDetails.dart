@@ -45,226 +45,241 @@ class _BankDetailsState extends State<BankDetails> {
       child: Scaffold(
         appBar: CustomAppBar(
           preferredHeight: size.height * 0.08,
-          title: "Bank Details",
+          title: "Bank Account",
         ),
         backgroundColor: Constants.themeColor,
-        body: SizedBox(
-          height: size.height - statusBarHeight,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: size.width * 0.02,
-              vertical: size.height * 0.02,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        widget.bankName,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        // textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: size.shortestSide * 0.06,
-                          color: Colors.black,
-                        ),
-                      ),
+        body: Center(
+          child: SizedBox(
+            height: size.height - statusBarHeight,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * 0.02,
+                vertical: size.height * 0.02,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: size.height * 0.05,
                     ),
-                  ),
-                  SizedBox(
-                    height: size.height * 0.01,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        widget.bankSite,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        // textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: size.shortestSide * 0.03,
-                          color: Color(0xff717171),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: size.width,
-                        height: size.height * 0.55,
-                        decoration: BoxDecoration(
-                          color: Color(0xffD3DBFB),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          border: Border.all(
+                    Align(
+                      alignment: Alignment.center,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          widget.bankName,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: size.shortestSide * 0.06,
                             color: Colors.black,
                           ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Form(
-                            key: _formKey,
-                            child: ListView.separated(
-                              physics: BouncingScrollPhysics(),
-                              itemCount: 6,
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      SizedBox(height: size.height * 0.01),
-                              itemBuilder: (BuildContext context, int index) {
-                                switch (index) {
-                                  case 0:
-                                    return Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * 0.02,
-                                            vertical: size.height * 0.01,
-                                          ),
-                                          child: Text(
-                                            'Enter Account Details',
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              fontSize:
-                                                  size.shortestSide * 0.07,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.01,
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          widget.bankSite,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: size.shortestSide * 0.03,
+                            color: Color(0xff717171),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: size.width,
+                          height: size.height * 0.55,
+                          decoration: BoxDecoration(
+                            color: Color(0xffD3DBFB),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Form(
+                              key: _formKey,
+                              child: ListView.separated(
+                                physics: BouncingScrollPhysics(),
+                                itemCount: 6,
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        SizedBox(height: size.height * 0.01),
+                                itemBuilder: (BuildContext context, int index) {
+                                  switch (index) {
+                                    case 0:
+                                      return Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: size.width * 0.02,
+                                              vertical: size.height * 0.01,
+                                            ),
+                                            child: Text(
+                                              'Enter Account Details', //Centerized The Screen
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                fontSize:
+                                                    size.shortestSide * 0.07,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w700,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
+                                      );
 
-                                  case 1:
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * 0.03,
-                                      ),
-                                      child: Field(
-                                        labelText: "Name",
-                                        hintText: "Enter Bank Holder Name",
-                                        vertical: 0.03,
-                                        horizontal: 0.04,
-                                        borderColor: BorderSide.none,
-                                        snackbarText: '* Required',
-                                        fieldController: nameController,
-                                      ),
-                                    );
+                                    case 1:
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * 0.03,
+                                        ),
+                                        child: Field(
+                                          labelText: "Name",
+                                          hintText: "Enter Bank Holder Name",
+                                          vertical: 0.03,
+                                          horizontal: 0.04,
+                                          borderColor: BorderSide.none,
+                                          snackbarText: '* Required',
+                                          fieldController: nameController,
+                                        ),
+                                      );
 
-                                  case 2:
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * 0.03,
-                                      ),
-                                      child: Field(
-                                        labelText: "Account Number",
-                                        hintText: "Enter Your Account Number",
-                                        vertical: 0.03,
-                                        horizontal: 0.03,
-                                        borderColor: BorderSide.none,
-                                        snackbarText: '* Required',
-                                        fieldController:
-                                            accountNumberController,
-                                      ),
-                                    );
+                                    case 2:
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * 0.03,
+                                        ),
+                                        child: Field(
+                                          labelText: "Account Number",
+                                          hintText: "Enter Your Account Number",
+                                          vertical: 0.03,
+                                          horizontal: 0.03,
+                                          borderColor: BorderSide.none,
+                                          keyboardType: TextInputType.number,
+                                          snackbarText: '* Required',
+                                          fieldController:
+                                              accountNumberController,
+                                        ),
+                                      );
 
-                                  case 3:
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * 0.03,
-                                      ),
-                                      child: Field(
-                                        labelText: "Confirm Account Number",
-                                        hintText: "Enter Your Account Number",
-                                        vertical: 0.03,
-                                        horizontal: 0.03,
-                                        borderColor: BorderSide.none,
-                                        snackbarText: '* Required',
-                                        fieldController:
-                                            confirmAccountNumberController,
-                                      ),
-                                    );
+                                    case 3:
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * 0.03,
+                                        ),
+                                        child: Field(
+                                          labelText: "Confirm Account Number",
+                                          hintText: "Enter Your Account Number",
+                                          vertical: 0.03,
+                                          horizontal: 0.03,
+                                          borderColor: BorderSide.none,
+                                          keyboardType: TextInputType.number,
+                                          snackbarText: '* Required',
+                                          fieldController:
+                                              confirmAccountNumberController,
+                                        ),
+                                      );
 
-                                  case 4:
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * 0.03,
-                                      ),
-                                      child: Field(
-                                        labelText: "IFSC/Routing Number",
-                                        hintText:
-                                            "Enter Your IFSC/Routing Number",
-                                        vertical: 0.03,
-                                        horizontal: 0.03,
-                                        borderColor: BorderSide.none,
-                                        snackbarText: '* Required',
-                                        fieldController: ifscController,
-                                      ),
-                                    );
+                                    case 4:
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * 0.03,
+                                        ),
+                                        child: Field(
+                                          labelText: "IFSC/Routing Number",
+                                          hintText:
+                                              "Enter Your IFSC/Routing Number",
+                                          vertical: 0.03,
+                                          horizontal: 0.03,
+                                          borderColor: BorderSide.none,
+                                          snackbarText: '* Required',
+                                          fieldController: ifscController,
+                                        ),
+                                      );
 
-                                  case 5:
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * 0.03,
-                                      ),
-                                      child: Field(
-                                        labelText: "Branch",
-                                        hintText: "Enter Your Branch",
-                                        vertical: 0.03,
-                                        horizontal: 0.03,
-                                        borderColor: BorderSide.none,
-                                        snackbarText: '* Required',
-                                        fieldController: branchController,
-                                      ),
-                                    );
+                                    case 5:
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * 0.03,
+                                        ),
+                                        child: Field(
+                                          labelText: "Branch",
+                                          hintText: "Enter Your Branch",
+                                          vertical: 0.03,
+                                          horizontal: 0.03,
+                                          borderColor: BorderSide.none,
+                                          snackbarText: '* Required',
+                                          fieldController: branchController,
+                                        ),
+                                      );
 
-                                  default:
-                                    return SizedBox();
-                                }
-                              },
+                                    default:
+                                      return SizedBox();
+                                  }
+                                },
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: size.width * 0.03,
-                        vertical: size.height * 0.02,
-                      ),
-                      child: AgreeButton(
-                        buttonText: "Confirm",
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            // Handle saving the address here
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => VerifyBankDetails(),
-                              ),
-                            );
-                          }
-                        },
-                        padding: 0.8,
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.03,
+                          vertical: size.height * 0.02,
+                        ),
+                        child: AgreeButton(
+                          buttonText: "Confirm",
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              if (accountNumberController.text !=
+                                  confirmAccountNumberController.text) {
+                                Constants.showError(context,
+                                    'Account Number and Confirm Account Number must be Same');
+                              } else {
+                                // Handle saving the address here
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => VerifyBankDetails(
+                                      bankName: widget.bankName,
+                                      bankSite: widget.bankSite,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          padding: 0.8,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -2,14 +2,18 @@ import 'dart:io';
 
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
+import 'package:chola_driver_flutter/Pages/MapAddress.dart';
 // import 'package:chola_driver_flutter/Widgets/BackButton.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 // import 'package:chola_driver_flutter/Widgets/DropDown.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:geolocator/geolocator.dart';
 // import 'package:permission_handler/permission_handler.dart';
 
 class ParmanentAddress extends StatefulWidget {
@@ -23,13 +27,62 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
   TextEditingController streetController = TextEditingController();
   TextEditingController addressline2Controller = TextEditingController();
   TextEditingController countryCodeController = TextEditingController();
-  TextEditingController zipcodeController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController stateController = TextEditingController();
   TextEditingController countryController = TextEditingController();
+  TextEditingController postalController = TextEditingController();
   TextEditingController apartmentController = TextEditingController();
   TextEditingController houseController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    _fetchCurrentLocation();
+  }
+
+  Future<void> _fetchCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+      Placemark placemark = placemarks.first;
+      if (Constants.latLang == LatLng(0, 0)) {
+        setState(() {
+          streetController.text = placemark.street ?? '';
+          cityController.text = placemark.locality ?? '';
+          stateController.text = placemark.administrativeArea ?? '';
+          countryController.text = placemark.country ?? '';
+          // countryCodeController.text = placemark.countryCode ?? '';
+          addressline2Controller.text = placemark.subLocality ?? '';
+          apartmentController.text = placemark.subAdministrativeArea ?? '';
+          houseController.text = placemark.subThoroughfare ?? '';
+          postalController.text = placemark.postalCode ?? '';
+
+          // Update other fields as needed
+        });
+      } else {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            Constants.latLang.latitude, Constants.latLang.longitude);
+        Placemark placemark = placemarks.first;
+        setState(() {
+          streetController.text = placemark.street ?? '';
+          cityController.text = placemark.locality ?? '';
+          stateController.text = placemark.administrativeArea ?? '';
+          countryController.text = placemark.country ?? '';
+          // countryCodeController.text = placemark.countryCode ?? '';
+          addressline2Controller.text = placemark.subLocality ?? '';
+          apartmentController.text = placemark.subAdministrativeArea ?? '';
+          houseController.text = placemark.subThoroughfare ?? '';
+          postalController.text = placemark.postalCode ?? '';
+          // Update other fields as needed
+        });
+      }
+    } catch (e) {
+      print('Error fetching location: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +96,7 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
         backgroundColor: Constants.themeColor,
         appBar: CustomAppBar(
           preferredHeight: size.height * 0.08,
-          title: 'Home Address',
+          title: 'Residence Address',
         ),
         body: SizedBox(
           height: size.height - statusBarHeight,
@@ -88,14 +141,14 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: TextStyle(
-                                        fontSize: size.shortestSide * 0.035,
+                                        fontSize: size.shortestSide * 0.045,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ),
                                   Field(
-                                    labelText: "House No",
+                                    labelText: "",
                                     hintText: "Enter Your House Number",
                                     vertical: 0.03,
                                     horizontal: 0.04,
@@ -117,22 +170,22 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                                       vertical: size.height * 0.01,
                                     ),
                                     child: Text(
-                                      'Apartment, Suite, etc..',
+                                      'Apartment, Suit, etc..',
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: TextStyle(
-                                        fontSize: size.shortestSide * 0.035,
+                                        fontSize: size.shortestSide * 0.045,
                                         color: Colors.black,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ),
                                   Field(
-                                    labelText: "Apartment",
+                                    labelText: "",
                                     hintText: "Enter Your Apartment Name",
                                     vertical: 0.03,
                                     horizontal: 0.03,
-                                    snackbarText: '* Required',
+                                    // snackbarText: '* Required',
                                     fieldController: apartmentController,
                                   ),
                                 ],
@@ -150,11 +203,11 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                                 vertical: size.height * 0.01,
                               ),
                               child: Text(
-                                'Street',
+                                'Street/Address Line 1',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
-                                  fontSize: size.shortestSide * 0.035,
+                                  fontSize: size.shortestSide * 0.045,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -163,12 +216,24 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                           ),
                         ),
                         Field(
-                          labelText: "Street",
+                          labelText: "",
                           hintText: "Enter Name of Street",
                           vertical: 0.03,
                           horizontal: 0.04,
-                          // icon: Icon(Icons.location_on),
                           snackbarText: '* Required',
+                          suffixWidget: IconButton(
+                            onPressed: () {
+                              //Navigate to Map page for address input
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MapAddress(),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.location_on),
+                            color: Color(0xff473CC5),
+                          ),
                           fieldController: streetController,
                         ),
                         Align(
@@ -181,11 +246,11 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                                 vertical: size.height * 0.01,
                               ),
                               child: Text(
-                                'Address Line 2',
+                                'Address Line 2', //Make it Optional
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
-                                  fontSize: size.shortestSide * 0.035,
+                                  fontSize: size.shortestSide * 0.045,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -194,11 +259,11 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                           ),
                         ),
                         Field(
-                          labelText: "Address Line 2",
+                          labelText: "",
                           hintText: "Enter Your Address Line 2",
                           vertical: 0.03,
                           horizontal: 0.03,
-                          snackbarText: '* Required',
+                          // snackbarText: '* Required',
                           fieldController: addressline2Controller,
                         ),
                         Align(
@@ -215,7 +280,7 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
-                                  fontSize: size.shortestSide * 0.035,
+                                  fontSize: size.shortestSide * 0.045,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -224,7 +289,7 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                           ),
                         ),
                         Field(
-                          labelText: "City",
+                          labelText: "",
                           hintText: "Enter Your City",
                           vertical: 0.03,
                           horizontal: 0.03,
@@ -245,7 +310,7 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
-                                  fontSize: size.shortestSide * 0.035,
+                                  fontSize: size.shortestSide * 0.045,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -254,7 +319,7 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                           ),
                         ),
                         Field(
-                          labelText: "State",
+                          labelText: "",
                           hintText: "Enter Your State",
                           vertical: 0.03,
                           horizontal: 0.03,
@@ -271,11 +336,11 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                                 vertical: size.height * 0.01,
                               ),
                               child: Text(
-                                'Country',
+                                'Postal Code',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
-                                  fontSize: size.shortestSide * 0.035,
+                                  fontSize: size.shortestSide * 0.045,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -284,7 +349,38 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                           ),
                         ),
                         Field(
-                          labelText: "Country",
+                          labelText: "",
+                          hintText: "Enter Your Postal Code",
+                          vertical: 0.03,
+                          horizontal: 0.03,
+                          snackbarText: '* Required',
+                          keyboardType: TextInputType.number,
+                          fieldController: postalController,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: size.width * 0.02,
+                                vertical: size.height * 0.01,
+                              ),
+                              child: Text(
+                                'Country',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: size.shortestSide * 0.045,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Field(
+                          labelText: "",
                           hintText: "Enter Your Country",
                           vertical: 0.03,
                           horizontal: 0.03,
@@ -312,7 +408,7 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                 vertical: size.height * 0.02,
               ),
               child: AgreeButton(
-                buttonText: "Save Address",
+                buttonText: "Save & Continue",
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     Directory appDocDir = await getApplicationCacheDirectory();
@@ -334,7 +430,7 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                             'City: ${cityController.text}\n'
                             'State: ${stateController.text}\n'
                             'Country: ${countryController.text}');
-                    
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(

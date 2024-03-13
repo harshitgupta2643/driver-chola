@@ -7,6 +7,7 @@ import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:country_state_city_pro/country_state_city_pro.dart';
 
 class EnterDetails1 extends StatefulWidget {
   final String jwt;
@@ -18,11 +19,13 @@ class EnterDetails1 extends StatefulWidget {
 
 class _EnterDetails1State extends State<EnterDetails1> {
   final _formKey = GlobalKey<FormState>();
-  final _cityController = TextEditingController();
   final _referralController = TextEditingController();
   FocusNode _cityFocusNode = FocusNode();
   FocusNode _referralFocusNode = FocusNode();
   Map<String, dynamic> data = {};
+  TextEditingController country = TextEditingController();
+  TextEditingController state = TextEditingController();
+  TextEditingController city = TextEditingController();
 
   updateCity(String cityName) async {
     print('dhjbcjdkbcdkj');
@@ -63,7 +66,7 @@ class _EnterDetails1State extends State<EnterDetails1> {
       child: Scaffold(
         backgroundColor: Constants.themeColor,
         appBar: CustomAppBar(
-          title: "Enter Details",
+          title: "Location Details",
           preferredHeight: size.height * 0.08,
         ),
         body: SizedBox(
@@ -84,7 +87,7 @@ class _EnterDetails1State extends State<EnterDetails1> {
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          'Enter Your City Name',
+                          'Select Location',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: TextStyle(
@@ -98,16 +101,41 @@ class _EnterDetails1State extends State<EnterDetails1> {
                     SizedBox(
                       height: size.width * 0.05,
                     ),
-                    Field(
-                      labelText: "",
-                      hintText: "Enter Your City Name",
-                      icon: Icon(Icons.location_city),
-                      vertical: 0.03,
-                      horizontal: 0.04,
-                      focusNode: _cityFocusNode,
-                      snackbarText: 'Please enter your City Name',
-                      fieldController: _cityController,
+                    CountryStateCityPicker(
+                      country: country,
+                      state: state,
+                      city: city,
+                      dialogColor: Constants.themeColor,
+                      textFieldDecoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        suffixIcon: const Icon(Icons.arrow_drop_down),
+                        icon: Icon(
+                          Icons.location_city,
+                        ),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                            width: 1,
+                          ),
+                        ),
+                      ),
                     ),
+
+                    // Field(
+                    //   labelText: "",
+                    //   hintText: "Enter Your City Name",
+                    //   icon: Icon(Icons.location_city),
+                    //   vertical: 0.03,
+                    //   horizontal: 0.04,
+                    //   focusNode: _cityFocusNode,
+                    //   snackbarText: 'Please enter your City Name',
+                    //   fieldController: _cityController,
+                    // ),
+
                     SizedBox(
                       height: MediaQuery.of(context).size.width * 0.05,
                     ),
@@ -150,7 +178,7 @@ class _EnterDetails1State extends State<EnterDetails1> {
                         if (_formKey.currentState!.validate()) {
                           try {
                             Map<String, dynamic> result = await updateCity(
-                              _cityController.text.toUpperCase(),
+                              city.text.toUpperCase(),
                             );
 
                             setState(() {

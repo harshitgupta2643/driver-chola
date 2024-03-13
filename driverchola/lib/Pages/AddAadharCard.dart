@@ -23,6 +23,12 @@ class _AadharCardState extends State<AadharCard> {
   bool isVerify = false;
   File? _frontImageFile;
   File? _backImageFile;
+  FocusNode _aadharFocus = FocusNode();
+  @override
+  void initState() {
+    super.initState();
+    _aadharFocus.requestFocus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +41,7 @@ class _AadharCardState extends State<AadharCard> {
       child: Scaffold(
         appBar: CustomAppBar(
           preferredHeight: size.height * 0.08,
-          title: "Add Aadhar",
+          title: "Aadhar",
         ),
         backgroundColor: Constants.themeColor,
         body: SizedBox(
@@ -70,9 +76,10 @@ class _AadharCardState extends State<AadharCard> {
                       horizontal: size.height * 0.02,
                     ),
                     child: Field(
-                      labelText: "Aadhar Number",
+                      labelText: "",
                       hintText: "Enter Your Aadhar Number",
                       vertical: 0.04,
+                      focusNode: _aadharFocus,
                       horizontal: 0.04,
                       maxLength: 12,
                       keyboardType: TextInputType.number,
@@ -83,13 +90,24 @@ class _AadharCardState extends State<AadharCard> {
                     height: size.height * 0.02,
                   ),
                   Text(
-                    'Front side of your Aadhar',
+                    'Aadhar Card Front',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: size.shortestSide * 0.045,
+                      fontSize: size.shortestSide * 0.055,
                       color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    '(Click Again to reselect)',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: size.shortestSide * 0.027,
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                   SizedBox(
@@ -111,13 +129,24 @@ class _AadharCardState extends State<AadharCard> {
                     height: size.height * 0.02,
                   ),
                   Text(
-                    'Back side of your Aadhar',
+                    'Aadhar Card Back',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: size.shortestSide * 0.045,
+                      fontSize: size.shortestSide * 0.055,
                       color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    '(Click Again to reselect)',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: size.shortestSide * 0.027,
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                   SizedBox(
@@ -135,79 +164,84 @@ class _AadharCardState extends State<AadharCard> {
                       },
                     ),
                   ),
+                  SizedBox(
+                    height: size.height * 0.02,
+                  ),
+                  SizedBox(
+                    height: size.height * 0.15,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          AgreeButton(
+                            buttonText: "Save & Continue",
+                            onPressed: () {
+                              if (aadharCardController.length != 12) {
+                                Constants.showError(
+                                  context,
+                                  "Enter Valid Aadhar Number",
+                                );
+                              } else if (_frontImageFile == null) {
+                                Constants.showError(
+                                  context,
+                                  "Please Attach/Take Picture of Front side of Aadhar Card",
+                                );
+                              } else if (_backImageFile == null) {
+                                Constants.showError(
+                                  context,
+                                  "Please Attach/Take Picture of Back side of Aadhar Card",
+                                );
+                              } else {
+                                setState(() {
+                                  isVerify = true;
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddDocument(
+                                      isVerifyPermanentAddress: true,
+                                      isVerifyAadhar: isVerify,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            padding: 0.7,
+                          ),
+                          SizedBox(
+                            height: size.height * 0.01,
+                          ),
+                          Expanded(
+                            child:
+                                LayoutBuilder(builder: (context, constraints) {
+                              double fontSize = constraints.maxWidth * 0.04;
+                              return Text(
+                                'Upload all Documents to start earning with CHOLA.',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: fontSize,
+                                  color: Colors.black,
+                                ),
+                              );
+                            }),
+                          ),
+                          // Container(
+
+                          // )
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
-        bottomNavigationBar: SizedBox(
-          height: size.height * 0.15,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AgreeButton(
-                  buttonText: "Okay",
-                  onPressed: () {
-                    if (aadharCardController.length != 12) {
-                      Constants.showError(
-                        context,
-                        "Enter Valid Aadhar Number (Length: 12)",
-                      );
-                    } else if (_frontImageFile == null) {
-                      Constants.showError(
-                        context,
-                        "Please select the front side of your Aadhar card image.",
-                      );
-                    } else if (_backImageFile == null) {
-                      Constants.showError(
-                        context,
-                        "Please select the back side of your Aadhar card image.",
-                      );
-                    } else {
-                      setState(() {
-                        isVerify = true;
-                      });
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddDocument(
-                            isVerifyPermanentAddress: true,
-                            isVerifyAadhar: isVerify,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  padding: 0.6,
-                ),
-                SizedBox(
-                  height: size.height * 0.01,
-                ),
-                Expanded(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    double fontSize = constraints.maxWidth * 0.04;
-                    return Text(
-                      'Upload all Documents to start earning with CHOLA.',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: fontSize,
-                        color: Colors.black,
-                      ),
-                    );
-                  }),
-                ),
-                // Container(
-
-                // )
-              ],
-            ),
-          ),
-        ),
+        // bottomNavigationBar:
       ),
     );
   }

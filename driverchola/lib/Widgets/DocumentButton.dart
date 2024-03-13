@@ -47,8 +47,8 @@ class _DocumentButtonState extends State<DocumentButton> {
             shape: MaterialStatePropertyAll(
               RoundedRectangleBorder(
                 side: BorderSide(
-                  width: (widget.isVerify) ? 2 : 1,
-                  color: (widget.isVerify) ? Colors.green : Colors.black,
+                  width: (widget.isVerify) ? 5 : 1,
+                  color: (widget.isVerify) ? Color(0xff15AD2D) : Colors.black,
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -78,6 +78,7 @@ class _DocumentButtonState extends State<DocumentButton> {
                   ? Icon(
                       Icons.verified_rounded,
                       color: Colors.green,
+                      size: size.shortestSide * 0.09,
                     )
                   : Transform.rotate(
                       angle: 90 * (3.141592653589793 / 180),

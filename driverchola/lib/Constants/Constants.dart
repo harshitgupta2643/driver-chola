@@ -1,5 +1,6 @@
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Constants {
   static const String apiKey = "AIzaSyCfHVm5xypidpMEUAEuxmie_FDqme9tiLY";
@@ -40,6 +41,7 @@ class Constants {
     'Extra wait time included to meet your ride',
     'Cancel at no charge up to 60 minutes in advance.',
   ];
+  static LatLng latLang = LatLng(0, 0);
   static List<Map<String, String>> destinationList = [
     // {
     //   'address':

@@ -132,7 +132,7 @@ class _PhoneVerifyState extends State<PhoneVerify> {
       ),
       child: Scaffold(
         appBar: CustomAppBar(
-          title: "Enter OTP",
+          title: "Phone OTP",
           preferredHeight: MediaQuery.of(context).size.height * 0.08,
         ),
         backgroundColor: Constants.themeColor,
@@ -206,7 +206,7 @@ class _PhoneVerifyState extends State<PhoneVerify> {
                               );
                         // }
                       } catch (e) {
-                        Constants.showError(context, 'Exception: $e');
+                        print('Exception: $e');
                       }
                     },
                     padding: 0.7,

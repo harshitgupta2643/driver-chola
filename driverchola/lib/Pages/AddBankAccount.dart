@@ -48,40 +48,45 @@ class _BankAccountState extends State<BankAccount> {
       child: Scaffold(
         backgroundColor: Constants.themeColor,
         appBar: CustomAppBar(
-          title: "Add Bank Account",
+          title: "Bank Account",
           preferredHeight: size.height * 0.08,
         ),
         body: Column(
           children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Select Your Bank',
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: size.shortestSide * 0.06,
-                    color: Colors.black,
+            Container(
+              width: size.width,
+              color: Constants.themeColor,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Select Your Bank',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: size.shortestSide * 0.06,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Field(
-                labelText: "",
-                hintText: "Search Your Bank",
-                vertical: 0.03,
-                horizontal: 0.04,
-                keyboardType: TextInputType.text,
-                prefixWidget: Icon(
-                  Icons.search,
-                ),
-                onChanged: applySearch,
-                fieldController: _searchController,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Field(
+                      labelText: "",
+                      hintText: "Search Your Bank",
+                      vertical: 0.03,
+                      horizontal: 0.04,
+                      keyboardType: TextInputType.text,
+                      prefixWidget: Icon(
+                        Icons.search,
+                      ),
+                      onChanged: applySearch,
+                      fieldController: _searchController,
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -142,7 +147,7 @@ class _BankAccountState extends State<BankAccount> {
                       ),
                       minVerticalPadding: size.height * 0.02,
                       horizontalTitleGap: size.width * 0.02,
-                      visualDensity: VisualDensity.compact,
+                      // visualDensity: VisualDensity.compact,
                     );
                   },
                 ),
