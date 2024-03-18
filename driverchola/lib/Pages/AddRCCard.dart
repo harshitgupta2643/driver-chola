@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
+import 'package:chola_driver_flutter/Widgets/BottomLine.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:chola_driver_flutter/Widgets/ImagePicker.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class RCCard extends StatefulWidget {
   const RCCard({
@@ -25,11 +29,87 @@ class _RCCardState extends State<RCCard> {
   TextEditingController expiryController = TextEditingController();
   DateTime? selectedDate;
   FocusNode _rcfocusNode = FocusNode();
+  bool isLoading = false;
+  late SharedPreferences _prefs;
+  String frontImageUrl = '';
+  String backImageUrl = '';
 
   @override
   void initState() {
     super.initState();
     _rcfocusNode.requestFocus();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    _prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        rcCardController.text = _prefs.getString('rcCard') ?? '';
+        expiryController.text = _prefs.getString('rcExpiry') ?? '';
+
+        // Load front and back image URLs
+        String? frontImageUrl = _prefs.getString('rcCardFrontUrl');
+        String? backImageUrl = _prefs.getString('rcCardBackUrl');
+        print(frontImageUrl);
+        print(backImageUrl);
+
+        if (_rcCardFrontImageFile != null)
+          _rcCardFrontImageFile = File(frontImageUrl!.toString());
+        if (_rcCardBackImageFile != null)
+          _rcCardBackImageFile = File(backImageUrl!.toString());
+      });
+    }
+  }
+
+  Future<void> _saveData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await _prefs.setString('rcCard', rcCardController.text);
+    await _prefs.setString('rcExpiry', expiryController.text);
+    if (_rcCardFrontImageFile != null) {
+      frontImageUrl =
+          await uploadFile(_rcCardFrontImageFile, 'rcCard', 'rcCardFront');
+      if (mounted) {
+        await _prefs.setString('rcCardFrontUrl', frontImageUrl);
+      }
+    }
+    if (_rcCardBackImageFile != null) {
+      backImageUrl =
+          await uploadFile(_rcCardBackImageFile, 'rcCard', 'rcCardBack');
+      if (mounted) {
+        await _prefs.setString('rcCardBackUrl', backImageUrl);
+      }
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<String> uploadFile(
+      File? _imageFile, String docsName, String fileName) async {
+    if (_imageFile == null) return '';
+    final destination = '${Constants.phoneNo}/${docsName}/${fileName}';
+
+    try {
+      print('object');
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref(destination)
+          .child('${fileName}/');
+      print('123');
+      await ref.putFile(_imageFile);
+      print('object2');
+      String downloadURL = await ref.getDownloadURL();
+      print('object3');
+      print(downloadURL);
+      return downloadURL;
+    } catch (e) {
+      print('error occurred');
+      return '';
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -82,9 +162,11 @@ class _RCCardState extends State<RCCard> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: size.shortestSide * 0.06,
                       color: Colors.black,
+                      fontSize: size.shortestSide * 0.0533,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
                     ),
                   ),
                   SizedBox(
@@ -112,9 +194,11 @@ class _RCCardState extends State<RCCard> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: size.shortestSide * 0.06,
                       color: Colors.black,
+                      fontSize: size.shortestSide * 0.0533,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
                     ),
                   ),
                   SizedBox(
@@ -169,9 +253,11 @@ class _RCCardState extends State<RCCard> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: size.shortestSide * 0.055,
                       color: Colors.black,
+                      fontSize: size.shortestSide * 0.0533,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
                     ),
                   ),
                   Text(
@@ -193,6 +279,8 @@ class _RCCardState extends State<RCCard> {
                       horizontal: size.width * 0.04,
                     ),
                     child: ImagePickerButton(
+                      docsName: 'RC',
+                      fileName: 'RCBack',
                       onImagePicked: (file) {
                         setState(() {
                           _rcCardFrontImageFile = file;
@@ -208,9 +296,11 @@ class _RCCardState extends State<RCCard> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: size.shortestSide * 0.055,
                       color: Colors.black,
+                      fontSize: size.shortestSide * 0.0533,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
                     ),
                   ),
                   Text(
@@ -232,6 +322,8 @@ class _RCCardState extends State<RCCard> {
                       horizontal: size.width * 0.04,
                     ),
                     child: ImagePickerButton(
+                      docsName: 'RC',
+                      fileName: 'RCFront',
                       onImagePicked: (file) {
                         setState(() {
                           _rcCardBackImageFile = file;
@@ -247,64 +339,85 @@ class _RCCardState extends State<RCCard> {
                     child: Center(
                       child: Column(
                         children: [
-                          AgreeButton(
-                            buttonText: "Save & Continue",
-                            onPressed: () {
-                              if (rcCardController.text.isEmpty) {
-                                Constants.showError(
-                                  context,
-                                  "Please enter your RC number.",
-                                );
-                              } else if (_rcCardFrontImageFile == null) {
-                                Constants.showError(
-                                  context,
-                                  "Please Attach/Take Picture of the Registration Card Front",
-                                );
-                              } else if (_rcCardBackImageFile == null) {
-                                Constants.showError(
-                                  context,
-                                  "Please Attach/Take Picture of the Registration Card Back",
-                                );
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddDocument(
-                                      isVerifyAadhar: true,
-                                      isVerifyPan: true,
-                                      isVerifyDriverLicense: true,
-                                      isVerifyRC: true,
-                                      isVerifyPermanentAddress: true,
-                                      isVerifyVehicle: true,
-                                      isVerifyPhoto: true,
-                                      isVerifyBankAccount: true,
+                          Visibility(
+                            visible: !isLoading,
+                            child: AgreeButton(
+                              buttonText: "Save & Continue",
+                              onPressed: () async {
+                                if (rcCardController.text.isEmpty) {
+                                  Constants.showError(
+                                    context,
+                                    "Please enter your RC number.",
+                                  );
+                                } else if (_rcCardFrontImageFile == null) {
+                                  Constants.showError(
+                                    context,
+                                    "Please Attach/Take Picture of the Registration Card Front",
+                                  );
+                                } else if (_rcCardBackImageFile == null) {
+                                  Constants.showError(
+                                    context,
+                                    "Please Attach/Take Picture of the Registration Card Back",
+                                  );
+                                } else {
+                                  await _saveData();
+                                  // setState(() {
+                                  //   isLoading = true;
+                                  // });
+                                  await ApiCollection.updateRc(
+                                    rcCardController.text,
+                                    expiryController.text,
+                                    frontImageUrl,
+                                    backImageUrl,
+                                  );
+                                  // setState(() {
+                                  //   isLoading = false;
+                                  // });
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddDocument(
+                                        isVerifyAadhar: true,
+                                        isVerifyPan: true,
+                                        isVerifyDriverLicense: true,
+                                        isVerifyRC: true,
+                                        isVerifyPermanentAddress: true,
+                                        isVerifyVehicle: true,
+                                        isVerifyPhoto: true,
+                                        isVerifyBankAccount: true,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }
-                            },
-                            padding: 0.7,
+                                  );
+                                }
+                              },
+                              padding: 0.7,
+                            ),
+                          ),
+                          Visibility(
+                            visible: isLoading,
+                            child: CircularProgressIndicator(),
                           ),
                           SizedBox(
                             height: size.height * 0.01,
                           ),
-                          Expanded(
-                            child:
-                                LayoutBuilder(builder: (context, constraints) {
-                              double fontSize = constraints.maxWidth * 0.04;
-                              return Text(
-                                'Upload all Documents to start earning with CHOLA.',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: fontSize,
-                                  color: Colors.black,
-                                ),
-                              );
-                            }),
-                          ),
+                          bottomLine(),
+                          // Expanded(
+                          //   child:
+                          //       LayoutBuilder(builder: (context, constraints) {
+                          //     double fontSize = constraints.maxWidth * 0.04;
+                          //     return Text(
+                          //       'Upload all Documents to start earning with CHOLA.',
+                          //       overflow: TextOverflow.ellipsis,
+                          //       maxLines: 1,
+                          //       textAlign: TextAlign.center,
+                          //       style: TextStyle(
+                          //         fontWeight: FontWeight.w500,
+                          //         fontSize: fontSize,
+                          //         color: Colors.black,
+                          //       ),
+                          //     );
+                          //   }),
+                          // ),
                         ],
                       ),
                     ),

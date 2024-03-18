@@ -1,4 +1,5 @@
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -8,9 +9,12 @@ class Constants {
     'https://www.wordstream.com/wp-content/uploads/2021/07/persuasive-ads-coca-cola-1.jpg',
     'https://www.wordstream.com/wp-content/uploads/2021/07/persuasive-ads-street-easy.jpg',
   ];
+  static Map<String, dynamic> user_data = {};
+  static Map<String, dynamic> documents_data = {};
   static const List<String> countryCodes = ['+91'];
   static String firstName = '';
-  static String phoneNo = '';
+  static String phoneNo = '+91 1234567890';
+  static String jwt = '';
   static const List<String> vehicleCompany = [
     'Maruti-Suzuki',
     'Hyundai',

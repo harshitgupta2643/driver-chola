@@ -172,11 +172,12 @@ class _VerifyBankDetailsState extends State<VerifyBankDetails> {
                 Text(
                   isVerified
                       ? isCorrect
-                          ? 'Your Bank Account Verified Successfully'
+                          ? 'Your Bank Account Verified\n Successfully'
                           : "Bank details didn't match"
                       : '',
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xff717171),
                     fontWeight: FontWeight.w700,
@@ -208,6 +209,7 @@ class _VerifyBankDetailsState extends State<VerifyBankDetails> {
                                       isVerifyDriverLicense: true,
                                       isVerifyPermanentAddress: true,
                                       isVerifyBankAccount: true,
+                                      isVerifyPhoto: true,
                                     ),
                                   ),
                                 )

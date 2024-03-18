@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -37,19 +36,28 @@ class DateOfBirth extends StatefulWidget {
 }
 
 class _DateOfBirthState extends State<DateOfBirth> {
-  List<String> months = DateFormat.EEEE(Platform.localeName).dateSymbols.MONTHS;
-  DateTime _selectedDate = DateTime.now();
+  late List<String> months;
+  late DateTime _selectedDate;
   late List<int> listyears;
 
   @override
   void initState() {
-    listyears = Iterable<int>.generate((DateTime.now().year + 1))
-        .skip(widget.startingYear ?? 1940)
-        .toList()
-        .reversed
-        .toList();
-
     super.initState();
+    _selectedDate = DateTime.now();
+    listyears = List.generate(
+        DateTime.now().year - (widget.startingYear ?? 1940) + 1,
+        (index) => DateTime.now().year - index);
+
+    months = DateFormat.MMMM().dateSymbols.MONTHS;
+
+    // Select the default date based on the selected starting year
+    if (widget.startingYear != null) {
+      _selectedDate = DateTime(
+        widget.startingYear!,
+        DateTime.now().month,
+        DateTime.now().day,
+      );
+    }
   }
 
   int daysInMonth(int year, int month) {
@@ -57,8 +65,10 @@ class _DateOfBirthState extends State<DateOfBirth> {
   }
 
   changeSelectedDate(DateTime datetime) {
-    _selectedDate = datetime;
-    setState(() {});
+    setState(() {
+      _selectedDate = datetime;
+    });
+    widget.onDateTimeChanged!(_selectedDate);
   }
 
   @override
@@ -89,8 +99,6 @@ class _DateOfBirthState extends State<DateOfBirth> {
                 onChanged: (newvalue) {
                   changeSelectedDate(DateTime(
                       _selectedDate.year, _selectedDate.month, newvalue!));
-
-                  widget.onDateTimeChanged!(_selectedDate);
                 },
                 selectedDate: _selectedDate.day,
                 width: width,
@@ -127,7 +135,6 @@ class _DateOfBirthState extends State<DateOfBirth> {
                     changeSelectedDate(DateTime(
                         _selectedDate.year, newvalue + 1, _selectedDate.day));
                   }
-                  widget.onDateTimeChanged!(_selectedDate);
                 },
                 selectedDate: _selectedDate.month - 1,
               ),
@@ -156,7 +163,6 @@ class _DateOfBirthState extends State<DateOfBirth> {
               onChanged: (newvalue) {
                 changeSelectedDate(DateTime(
                     newvalue!, _selectedDate.month, _selectedDate.day));
-                widget.onDateTimeChanged!(_selectedDate);
               },
               width: width,
             )),
@@ -172,40 +178,40 @@ class _DateOfBirthState extends State<DateOfBirth> {
       required Function(int?) onChanged,
       required List<int> list}) {
     return DropdownButton<int>(
-        dropdownColor: widget.backgroundDropdownColor,
-        alignment: Alignment.center,
-        icon: const Text(''),
-        elevation: 0,
-        underline: const Text(''),
-        key: const Key("2"),
-        items: list.map((item) {
-          return DropdownMenuItem<int>(
-            value: item,
-            child: Center(
-              child: Text(
-                item.toString(),
-                style: Theme.of(context).primaryTextTheme.bodyMedium!.copyWith(
-                      fontSize: widget.textsSize ?? 0.045 * width,
-                      color: widget.itemsColor ?? Colors.black,
-                    ),
-              ),
+      dropdownColor: widget.backgroundDropdownColor,
+      alignment: Alignment.center,
+      icon: const Text(''),
+      elevation: 0,
+      underline: const Text(''),
+      key: const Key("2"),
+      items: list.map((item) {
+        return DropdownMenuItem<int>(
+          value: item,
+          child: Center(
+            child: Text(
+              item.toString(),
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontSize: widget.textsSize ?? 0.045 * width,
+                    color: widget.itemsColor ?? Colors.black,
+                  ),
             ),
-          );
-        }).toList(),
-        onChanged: onChanged,
-        value: selectedDate,
-        selectedItemBuilder: (context) => list.map((item) {
-              return Center(
-                child: Text(
-                  item.toString(),
-                  style:
-                      Theme.of(context).primaryTextTheme.bodyMedium!.copyWith(
-                            fontSize: widget.textsSize ?? 0.045 * width,
-                            color: widget.itemColor ?? Colors.black,
-                          ),
+          ),
+        );
+      }).toList(),
+      onChanged: onChanged,
+      value: selectedDate,
+      selectedItemBuilder: (context) => list.map((item) {
+        return Center(
+          child: Text(
+            item.toString(),
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontSize: widget.textsSize ?? 0.045 * width,
+                  color: widget.itemColor ?? Colors.black,
                 ),
-              );
-            }).toList());
+          ),
+        );
+      }).toList(),
+    );
   }
 
   _buildMonths(
@@ -217,8 +223,6 @@ class _DateOfBirthState extends State<DateOfBirth> {
       dropdownColor: widget.backgroundDropdownColor,
       alignment: Alignment.center,
       icon: const Text(''),
-      
-      
       elevation: 0,
       underline: const Text(''),
       key: const Key("0"),
@@ -229,29 +233,27 @@ class _DateOfBirthState extends State<DateOfBirth> {
                 child: Center(
                   child: Text(
                     listMonths[index],
-                    style:
-                        Theme.of(context).primaryTextTheme.bodyMedium!.copyWith(
-                              fontSize: widget.textsSize ?? 0.035 * width,
-                              color: widget.itemsColor ?? Colors.black,
-                            ),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontSize: widget.textsSize ?? 0.035 * width,
+                          color: widget.itemsColor ?? Colors.black,
+                        ),
                   ),
                 ),
-                onTap: () {},
               )),
       onChanged: onChanged,
       value: selectedDate,
       selectedItemBuilder: (context) => List.generate(
-          listMonths.length,
-          (index) => Center(
-                child: Text(
-                  listMonths[index],
-                  style:
-                      Theme.of(context).primaryTextTheme.bodyMedium!.copyWith(
-                            fontSize: widget.textsSize ?? 0.035 * width,
-                            color: widget.itemColor ?? Colors.white,
-                          ),
+        listMonths.length,
+        (index) => Center(
+          child: Text(
+            listMonths[index],
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontSize: widget.textsSize ?? 0.035 * width,
+                  color: widget.itemColor ?? Colors.white,
                 ),
-              )),
+          ),
+        ),
+      ),
     );
   }
 
@@ -270,16 +272,14 @@ class _DateOfBirthState extends State<DateOfBirth> {
       items: List.generate(daysinmonth, (index) => index + 1)
           .map(
             (value) => DropdownMenuItem<int>(
-              onTap: () {},
               value: value,
               child: Center(
                 child: Text(
                   value.toString(),
-                  style:
-                      Theme.of(context).primaryTextTheme.bodyMedium!.copyWith(
-                            fontSize: widget.textsSize ?? 0.045 * width,
-                            color: widget.itemsColor ?? Colors.black,
-                          ),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontSize: widget.textsSize ?? 0.045 * width,
+                        color: widget.itemsColor ?? Colors.black,
+                      ),
                 ),
               ),
             ),
@@ -291,14 +291,14 @@ class _DateOfBirthState extends State<DateOfBirth> {
           List.generate(daysinmonth, (index) => index + 1)
               .map(
                 (value) => Center(
-                    child: Text(
-                  value.toString(),
-                  style:
-                      Theme.of(context).primaryTextTheme.bodyMedium!.copyWith(
-                            fontSize: widget.textsSize ?? 0.045 * width,
-                            color: widget.itemColor ?? Colors.white,
-                          ),
-                )),
+                  child: Text(
+                    value.toString(),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontSize: widget.textsSize ?? 0.045 * width,
+                          color: widget.itemColor ?? Colors.white,
+                        ),
+                  ),
+                ),
               )
               .toList(),
     );

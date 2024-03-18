@@ -1,15 +1,20 @@
 import 'dart:io';
+import 'dart:math';
 
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
+import 'package:chola_driver_flutter/Widgets/BottomLine.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 // import 'package:chola_driver_flutter/Widgets/CustomDropDown1.dart';
 // import 'package:chola_driver_flutter/Widgets/DropDown.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:chola_driver_flutter/Widgets/ImagePicker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class VehicleDetails extends StatefulWidget {
   const VehicleDetails({
@@ -29,24 +34,137 @@ class _VehicleDetailsState extends State<VehicleDetails> {
   TextEditingController licensePlateController = TextEditingController();
   bool isVerify = false;
   DateTime? selectedDate;
+  String showYear = 'Select Year';
+  DateTime? _selectedYear = DateTime.now();
   File? _vehicleImageFile;
-  // String dropdownValue1 = 'Item 1';
+  late SharedPreferences _prefs;
+  bool isLoading = false;
+  String vehicleImageUrl = '';
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDatePickerMode: DatePickerMode.year,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1947),
-      lastDate: DateTime.now(),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
-    if (picked != null && picked != selectedDate) {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    _prefs = await SharedPreferences.getInstance();
+    if (mounted) {
       setState(() {
-        selectedDate = picked;
-        vehicleYearController.text = "${picked.year}";
+        vehicleTypeController.text = _prefs.getString('vehicleType') ?? '';
+        vehicleCompanyController.text =
+            _prefs.getString('vehicleCompany') ?? '';
+        vehicleModelController.text = _prefs.getString('vehicleModel') ?? '';
+        vehicleYearController.text = _prefs.getString('vehicleYear') ?? '';
+        vehicleColorController.text = _prefs.getString('vehicleColor') ?? '';
+        licensePlateController.text = _prefs.getString('licensePlate') ?? '';
+
+        // Load front and back image URLs
+        String? vehicleImageUrl = _prefs.getString('vehicleImageUrl');
+        // String? backImageUrl = _prefs.getString('AadharCardBackUrl');
+        print(vehicleImageUrl);
+        // print(backImageUrl);
+
+        if (vehicleImageUrl != null) {
+          _vehicleImageFile = File(vehicleImageUrl);
+        }
       });
     }
+  }
+
+  Future<void> _saveData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await _prefs.setString('vehicleType', vehicleTypeController.text);
+    await _prefs.setString('vehicleCompany', vehicleCompanyController.text);
+    await _prefs.setString('vehicleModel', vehicleModelController.text);
+    await _prefs.setString('vehicleYear', vehicleYearController.text);
+    await _prefs.setString('vehicleColor', vehicleColorController.text);
+    await _prefs.setString('licensePlate', licensePlateController.text);
+    if (_vehicleImageFile != null) {
+      vehicleImageUrl =
+          await uploadFile(_vehicleImageFile, 'vehicleImage', 'vehicleImage');
+      if (mounted) {
+        await _prefs.setString('vehicleImageUrl', vehicleImageUrl);
+      }
+    }
+    // if (_backImageFile != null) {
+    //   String backImageUrl =
+    //       await uploadFile(_backImageFile, 'AadharCard', 'AadharCardBack');
+    //   if (mounted) {
+    //     await _prefs.setString('AadharCardBackUrl', backImageUrl);
+    //   }
+    // }
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<String> uploadFile(
+      File? _imageFile, String docsName, String fileName) async {
+    if (_imageFile == null) return '';
+    final destination = '${Constants.phoneNo}/${docsName}/${fileName}';
+
+    try {
+      print('object');
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref(destination)
+          .child('${fileName}/');
+      print('123');
+      await ref.putFile(_imageFile);
+      print('object2');
+      String downloadURL = await ref.getDownloadURL();
+      print('object3');
+      print(downloadURL);
+      return downloadURL;
+    } catch (e) {
+      print('error occurred');
+      return '';
+    }
+  }
+
+  _selectYear(BuildContext context) async {
+    int? selectedYear = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Year'),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: YearPicker(
+              selectedDate: _selectedYear,
+              firstDate: DateTime(DateTime.now().year - 100, 1),
+              lastDate: DateTime.now(),
+              onChanged: (DateTime dateTime) {
+                print(dateTime.year);
+                setState(() {
+                  _selectedYear = dateTime;
+                  showYear = '${dateTime.year}';
+                  vehicleYearController.text = "$showYear";
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    // if (_selectedYear != null) {
+    //   setState(() {
+    //     selectedDate = DateTime(_selectedYear);
+
+    //   });
+    // }
   }
 
   @override
@@ -81,9 +199,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: size.shortestSide * 0.05,
                     color: Colors.black,
+                    fontSize: size.shortestSide * 0.0533,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
                   ),
                 ),
                 SizedBox(
@@ -110,9 +230,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: size.shortestSide * 0.05,
                     color: Colors.black,
+                    fontSize: size.shortestSide * 0.0533,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
                   ),
                 ),
                 SizedBox(
@@ -160,9 +282,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: size.shortestSide * 0.05,
                     color: Colors.black,
+                    fontSize: size.shortestSide * 0.0533,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
                   ),
                 ),
                 SizedBox(
@@ -189,9 +313,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: size.shortestSide * 0.05,
                     color: Colors.black,
+                    fontSize: size.shortestSide * 0.0533,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
                   ),
                 ),
                 SizedBox(
@@ -203,7 +329,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   ),
                   child: TextFormField(
                     controller: vehicleYearController,
-                    onTap: () => _selectDate(context),
+                    onTap: () => _selectYear(context),
                     readOnly: true,
                     decoration: InputDecoration(
                       suffixIcon: Icon(
@@ -212,12 +338,12 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       enabled: true,
                       filled: true,
                       fillColor: Colors.white,
-                      labelText: 'Vehicle Year',
-                      labelStyle: TextStyle(
-                        // color: widget.color ?? ThemeData.light().colorScheme.primary,
-                        fontWeight: FontWeight.w900,
-                        fontSize: MediaQuery.of(context).size.width * 0.045,
-                      ),
+                      // labelText: 'Vehicle Year',
+                      // labelStyle: TextStyle(
+                      //   // color: widget.color ?? ThemeData.light().colorScheme.primary,
+                      //   fontWeight: FontWeight.w900,
+                      //   fontSize: MediaQuery.of(context).size.width * 0.045,
+                      // ),
                       hintText: 'Enter Vehicle Year',
                       // icon: widget.icon,
                       contentPadding: EdgeInsets.symmetric(
@@ -246,9 +372,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: size.shortestSide * 0.05,
                     color: Colors.black,
+                    fontSize: size.shortestSide * 0.0533,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
                   ),
                 ),
                 SizedBox(
@@ -275,9 +403,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: size.shortestSide * 0.05,
                     color: Colors.black,
+                    fontSize: size.shortestSide * 0.0533,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
                   ),
                 ),
                 SizedBox(
@@ -304,9 +434,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: size.shortestSide * 0.05,
                     color: Colors.black,
+                    fontSize: size.shortestSide * 0.0533,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 0,
                   ),
                 ),
                 SizedBox(
@@ -332,6 +464,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                     horizontal: size.width * 0.04,
                   ),
                   child: ImagePickerButton(
+                    docsName: 'Vehicle',
+                    fileName: 'VehicleImage',
                     onImagePicked: (file) {
                       setState(() {
                         _vehicleImageFile = file;
@@ -347,77 +481,110 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                   child: Center(
                     child: Column(
                       children: [
-                        AgreeButton(
-                          buttonText: "Save & Continue",
-                          onPressed: () {
-                            if (vehicleTypeController.length == 0) {
-                              Constants.showError(
-                                context,
-                                "Please Enter Vehicle Type",
-                              );
-                            } else if (vehicleModelController.length == 0) {
-                              Constants.showError(
-                                context,
-                                "Please Enter Vehicle Model",
-                              );
-                            } else if (vehicleYearController.length == 0) {
-                              Constants.showError(
-                                context,
-                                "Please Enter Valid Vehicle Year",
-                              );
-                            } else if (vehicleColorController.length == 0) {
-                              Constants.showError(
-                                context,
-                                "Please Enter Vehicle Color",
-                              );
-                            } else if (licensePlateController.length == 0) {
-                              Constants.showError(
-                                context,
-                                "Please Enter License Plate Number",
-                              );
-                            } else if (_vehicleImageFile == null) {
-                              Constants.showError(
-                                context,
-                                "Please Attach/Take Picture of Vehicle",
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddDocument(
-                                    isVerifyAadhar: true,
-                                    isVerifyPan: true,
-                                    isVerifyDriverLicense: true,
-                                    isVerifyPermanentAddress: true,
-                                    isVerifyPhoto: true,
-                                    isVerifyVehicle: true,
-                                    isVerifyBankAccount: true,
+                        Visibility(
+                          visible: !isLoading,
+                          child: AgreeButton(
+                            buttonText: "Save & Continue",
+                            onPressed: () async {
+                              if (vehicleTypeController.length == 0) {
+                                Constants.showError(
+                                  context,
+                                  "Please Enter Vehicle Type",
+                                );
+                              } else if (vehicleModelController.length == 0) {
+                                Constants.showError(
+                                  context,
+                                  "Please Enter Vehicle Model",
+                                );
+                              } else if (vehicleYearController.length == 0) {
+                                Constants.showError(
+                                  context,
+                                  "Please Enter Valid Vehicle Year",
+                                );
+                              } else if (vehicleColorController.length == 0) {
+                                Constants.showError(
+                                  context,
+                                  "Please Enter Vehicle Color",
+                                );
+                              } else if (licensePlateController.length == 0) {
+                                Constants.showError(
+                                  context,
+                                  "Please Enter License Plate Number",
+                                );
+                              } else if (_vehicleImageFile == null) {
+                                Constants.showError(
+                                  context,
+                                  "Please Attach/Take Picture of Vehicle",
+                                );
+                              } else {
+                                await _saveData();
+                                // print(vehicleTypeController.text);
+                                // print(Constants.vehicleCompany[max(
+                                //         Constants.vehicleCompany.indexOf(
+                                //             vehicleCompanyController.text),
+                                //         0)]
+                                //     .toString());
+                                // print(vehicleModelController.text);
+                                // print(vehicleYearController.text);
+                                // print(vehicleColorController.text);
+                                // print(licensePlateController.text);
+                                // print(vehicleImageUrl);
+                                await ApiCollection.updateVehicleDetails(
+                                  vehicleTypeController.text,
+                                  Constants.vehicleCompany[max(
+                                          Constants.vehicleCompany.indexOf(
+                                              vehicleCompanyController.text),
+                                          0)]
+                                      .toString(),
+                                  vehicleModelController.text,
+                                  vehicleYearController.text,
+                                  vehicleColorController.text,
+                                  licensePlateController.text,
+                                  vehicleImageUrl,
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddDocument(
+                                      isVerifyAadhar: true,
+                                      isVerifyPan: true,
+                                      isVerifyDriverLicense: true,
+                                      isVerifyPermanentAddress: true,
+                                      isVerifyPhoto: true,
+                                      isVerifyVehicle: true,
+                                      isVerifyBankAccount: true,
+                                    ),
                                   ),
-                                ),
-                              );
-                            }
-                          },
-                          padding: 0.7,
+                                );
+                              }
+                            },
+                            padding: 0.7,
+                          ),
+                        ),
+                        Visibility(
+                          visible: isLoading,
+                          child: CircularProgressIndicator(),
                         ),
                         SizedBox(
                           height: size.height * 0.01,
                         ),
-                        Expanded(
-                          child: LayoutBuilder(builder: (context, constraints) {
-                            double fontSize = constraints.maxWidth * 0.04;
-                            return Text(
-                              'Upload all Documents to start earning with CHOLA.',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: fontSize,
-                                color: Colors.black,
-                              ),
-                            );
-                          }),
-                        ),
+                        // Expanded(
+                        //   child: LayoutBuilder(builder: (context, constraints) {
+                        //     double fontSize = constraints.maxWidth * 0.04;
+                        //     return Text(
+                        //       'Upload all Documents to start earning with CHOLA.',
+                        //       overflow: TextOverflow.ellipsis,
+                        //       maxLines: 1,
+                        //       textAlign: TextAlign.center,
+                        //       style: TextStyle(
+                        //         fontWeight: FontWeight.w500,
+                        //         fontSize: fontSize,
+                        //         color: Colors.black,
+                        //       ),
+                        //     );
+                        //   }),
+                        // ),
+                        bottomLine(),
                       ],
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/ComingSoon.dart';
+import 'package:chola_driver_flutter/Pages/LoginPage1.dart';
 import 'package:chola_driver_flutter/Pages/Refer&Earn.dart';
 import 'package:chola_driver_flutter/Pages/Setting.dart';
 import 'package:chola_driver_flutter/Pages/TermsAndPrivacy1.dart';
@@ -309,7 +310,7 @@ class MenuWidget extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => MyHomePage(),
+                                          builder: (context) => LoginPage1(),
                                         ),
                                       );
                                     },

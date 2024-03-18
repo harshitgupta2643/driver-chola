@@ -1,18 +1,21 @@
 import 'dart:io';
 
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
+import 'package:chola_driver_flutter/Widgets/BottomLine.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:chola_driver_flutter/Widgets/ImagePicker.dart';
 import 'package:flutter/material.dart';
-import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class PanCard extends StatefulWidget {
   const PanCard({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<PanCard> createState() => _PanCardState();
@@ -23,12 +26,90 @@ class _PanCardState extends State<PanCard> {
   bool isVerify = false;
   File? _frontImageFile;
   File? _backImageFile;
+  String frontImageUrl = '';
+  String backImageUrl = '';
   FocusNode _panFocus = FocusNode();
+  late SharedPreferences _prefs;
+  bool isLoading = false;
+
+  // Add a GlobalKey for the Scaffold
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _panFocus.requestFocus();
+    _loadData();
+  }
+
+  @override
+  void dispose() {
+    _panFocus.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    _prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        panCardController.text = _prefs.getString('panCard') ?? '';
+
+        // Load front and back image URLs
+        String? frontImageUrl = _prefs.getString('PANCardFrontUrl');
+        String? backImageUrl = _prefs.getString('PANCardBackUrl');
+        _frontImageFile = frontImageUrl != null ? File(frontImageUrl) : null;
+        _backImageFile = backImageUrl != null ? File(backImageUrl) : null;
+      });
+    }
+  }
+
+  Future<void> _saveData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await _prefs.setString('panCard', panCardController.text);
+    if (_frontImageFile != null) {
+      frontImageUrl =
+          await uploadFile(_frontImageFile!, 'PANCard', 'PANCardFront');
+      if (mounted) {
+        await _prefs.setString('PANCardFrontUrl', frontImageUrl);
+      }
+    }
+    if (_backImageFile != null) {
+      backImageUrl =
+          await uploadFile(_backImageFile!, 'PANCard', 'PANCardBack');
+      if (mounted) {
+        await _prefs.setString('PANCardBackUrl', backImageUrl);
+      }
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<String> uploadFile(
+      File? _imageFile, String docsName, String fileName) async {
+    if (_imageFile == null) return '';
+    final destination = '${Constants.phoneNo}/${docsName}/${fileName}';
+
+    try {
+      print('object');
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref(destination)
+          .child('${fileName}/');
+      print('123');
+      await ref.putFile(_imageFile);
+      print('object2');
+      String downloadURL = await ref.getDownloadURL();
+      print('object3');
+      print(downloadURL);
+      return downloadURL;
+    } catch (e) {
+      print('error occurred');
+      return '';
+    }
   }
 
   @override
@@ -40,6 +121,7 @@ class _PanCardState extends State<PanCard> {
         top: statusBarHeight,
       ),
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: CustomAppBar(
           preferredHeight: size.height * 0.08,
           title: "Pan Card",
@@ -64,9 +146,11 @@ class _PanCardState extends State<PanCard> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: size.shortestSide * 0.06,
                       color: Colors.black,
+                      fontSize: size.shortestSide * 0.0533,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
                     ),
                   ),
                   SizedBox(
@@ -95,9 +179,11 @@ class _PanCardState extends State<PanCard> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: size.shortestSide * 0.055,
                       color: Colors.black,
+                      fontSize: size.shortestSide * 0.0533,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
                     ),
                   ),
                   Text(
@@ -119,6 +205,8 @@ class _PanCardState extends State<PanCard> {
                       horizontal: size.width * 0.04,
                     ),
                     child: ImagePickerButton(
+                      docsName: 'PANCard',
+                      fileName: 'PANCardFront',
                       onImagePicked: (file) {
                         setState(() {
                           _frontImageFile = file;
@@ -134,9 +222,11 @@ class _PanCardState extends State<PanCard> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: size.shortestSide * 0.055,
                       color: Colors.black,
+                      fontSize: size.shortestSide * 0.0533,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
                     ),
                   ),
                   Text(
@@ -158,6 +248,8 @@ class _PanCardState extends State<PanCard> {
                       horizontal: size.width * 0.04,
                     ),
                     child: ImagePickerButton(
+                      docsName: 'PANCard',
+                      fileName: 'PANCardBack',
                       onImagePicked: (file) {
                         setState(() {
                           _backImageFile = file;
@@ -173,62 +265,60 @@ class _PanCardState extends State<PanCard> {
                     child: Center(
                       child: Column(
                         children: [
-                          AgreeButton(
-                            buttonText: "Save & Continue",
-                            onPressed: () {
-                              if (panCardController.length != 10) {
-                                Constants.showError(
-                                  context,
-                                  "Please enter a valid PAN number. \nPAN numbers in India are 10 characters long.",
-                                );
-                              } else if (_frontImageFile == null) {
-                                Constants.showError(
-                                  context,
-                                  "Please Attach/Take Picture of Front side of PAN Card",
-                                );
-                              } else if (_backImageFile == null) {
-                                Constants.showError(
-                                  context,
-                                  "Please Attach/Take Picture of Back side of PAN Card",
-                                );
-                              } else {
-                                setState(() {
-                                  isVerify = true;
-                                });
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddDocument(
-                                      isVerifyPermanentAddress: true,
-                                      isVerifyAadhar: isVerify,
-                                      isVerifyPan: isVerify,
+                          Visibility(
+                            visible: !isLoading,
+                            child: AgreeButton(
+                              buttonText: "Save & Continue",
+                              onPressed: () async {
+                                if (panCardController.text.length != 10) {
+                                  Constants.showError(
+                                    context,
+                                    "Please enter a valid PAN number. \nPAN numbers in India are 10 characters long.",
+                                  );
+                                } else if (_frontImageFile == null) {
+                                  Constants.showError(
+                                    context,
+                                    "Please Attach/Take Picture of Front side of PAN Card",
+                                  );
+                                } else if (_backImageFile == null) {
+                                  Constants.showError(
+                                    context,
+                                    "Please Attach/Take Picture of Back side of PAN Card",
+                                  );
+                                } else {
+                                  setState(() {
+                                    isVerify = true;
+                                  });
+                                  await _saveData();
+                                  await ApiCollection.updatePanCard(
+                                    panCardController.text,
+                                    frontImageUrl,
+                                    backImageUrl,
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddDocument(
+                                        isVerifyPermanentAddress: true,
+                                        isVerifyAadhar: isVerify,
+                                        isVerifyPan: isVerify,
+                                        isVerifyPhoto: true,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }
-                            },
-                            padding: 0.7,
+                                  );
+                                }
+                              },
+                              padding: 0.7,
+                            ),
+                          ),
+                          Visibility(
+                            visible: isLoading,
+                            child: CircularProgressIndicator(),
                           ),
                           SizedBox(
                             height: size.height * 0.01,
                           ),
-                          Expanded(
-                            child:
-                                LayoutBuilder(builder: (context, constraints) {
-                              double fontSize = constraints.maxWidth * 0.04;
-                              return Text(
-                                'Upload all Documents to start earning with CHOLA.',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: fontSize,
-                                  color: Colors.black,
-                                ),
-                              );
-                            }),
-                          ),
+                          bottomLine(),
                         ],
                       ),
                     ),
@@ -238,7 +328,6 @@ class _PanCardState extends State<PanCard> {
             ),
           ),
         ),
-        // bottomNavigationBar:
       ),
     );
   }

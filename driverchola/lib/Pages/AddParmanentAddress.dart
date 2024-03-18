@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
 import 'package:chola_driver_flutter/Pages/MapAddress.dart';
@@ -11,7 +12,7 @@ import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:geolocator/geolocator.dart';
 // import 'package:permission_handler/permission_handler.dart';
@@ -38,7 +39,34 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
   @override
   void initState() {
     super.initState();
+    _loadSavedData();
     _fetchCurrentLocation();
+  }
+
+  Future<void> _loadSavedData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      houseController.text = prefs.getString('house') ?? '';
+      apartmentController.text = prefs.getString('apartment') ?? '';
+      streetController.text = prefs.getString('street') ?? '';
+      addressline2Controller.text = prefs.getString('addressLine2') ?? '';
+      cityController.text = prefs.getString('city') ?? '';
+      stateController.text = prefs.getString('state') ?? '';
+      postalController.text = prefs.getString('postal') ?? '';
+      countryController.text = prefs.getString('country') ?? '';
+    });
+  }
+
+  Future<void> _saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('house', houseController.text);
+    await prefs.setString('apartment', apartmentController.text);
+    await prefs.setString('street', streetController.text);
+    await prefs.setString('addressLine2', addressline2Controller.text);
+    await prefs.setString('city', cityController.text);
+    await prefs.setString('state', stateController.text);
+    await prefs.setString('postal', postalController.text);
+    await prefs.setString('country', countryController.text);
   }
 
   Future<void> _fetchCurrentLocation() async {
@@ -411,6 +439,20 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
                 buttonText: "Save & Continue",
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                    Map<String, dynamic> result =
+                        await ApiCollection.updateResidenceAddress(
+                      houseController.text,
+                      apartmentController.text,
+                      streetController.text,
+                      addressline2Controller.text,
+                      cityController.text,
+                      stateController.text,
+                      countryController.text,
+                      postalController.text,
+                    );
+                    setState(() {
+                      Constants.documents_data = result;
+                    });
                     Directory appDocDir = await getApplicationCacheDirectory();
                     String appDocPath = appDocDir.path;
 
@@ -448,5 +490,11 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _saveData(); // Save data when the widget is disposed
+    super.dispose();
   }
 }

@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
         width: double.maxFinite,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/splash_screen.jpeg'),
+            image: AssetImage('assets/splash_1.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -44,9 +44,21 @@ class _SplashScreenState extends State<SplashScreen> {
               width: size.width,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            Image.asset(
-              'assets/tagLine.png',
-              width: size.width * 0.6,
+            // Image.asset(
+            //   'assets/tagLine.png',
+            //   width: size.width * 0.6,
+            // ),
+            Text(
+              'Drive with CHOLA\n              Own a Chariot',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: size.shortestSide * 0.05867,
+                fontFamily: 'RacingSansOne',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: 1.43,
+              ),
             ),
           ],
         ),

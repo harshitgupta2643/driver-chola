@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/HomePage.dart';
 import 'package:chola_driver_flutter/Pages/LoginPage2.dart';
@@ -37,27 +38,29 @@ class _PhoneVerifyState extends State<PhoneVerify> {
 
   Map<String, dynamic> data = {};
 
-  verifyPhoneNumber() async {
-    print('dhjbcjdkbcdkj');
-    // print(dialCode.runtimeType);
-    var response = await http.put(
-      Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${widget.jwt}',
-      },
-      body: jsonEncode({
-        'phoneNoVerified': true,
-      }),
-    );
-    print(response.body);
-    if (response.statusCode == 200) {
-      print(json.decode(response.body).runtimeType);
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to verify PhoneNumber.');
-    }
-  }
+  @override
+
+  // verifyPhoneNumber() async {
+  //   print('dhjbcjdkbcdkj');
+  //   // print(dialCode.runtimeType);
+  //   var response = await http.put(
+  //     Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer ${widget.jwt}',
+  //     },
+  //     body: jsonEncode({
+  //       'phoneNoVerified': true,
+  //     }),
+  //   );
+  //   print(response.body);
+  //   if (response.statusCode == 200) {
+  //     print(json.decode(response.body).runtimeType);
+  //     return json.decode(response.body);
+  //   } else {
+  //     throw Exception('Failed to verify PhoneNumber.');
+  //   }
+  // }
 
   @override
   void initState() {
@@ -187,10 +190,20 @@ class _PhoneVerifyState extends State<PhoneVerify> {
                             .signInWithCredential(credential);
                         if (userCredential.user != null) {
                           Map<String, dynamic> result =
-                              await verifyPhoneNumber();
+                              await ApiCollection.verifyPhoneNumber();
                           setState(() {
                             data = result;
+                            Constants.user_data = result;
+                            Constants.phoneNo =
+                                result['user']['countryCode'].toString() +
+                                    '-' +
+                                    result['user']['phoneNo'].toString();
                           });
+                          print("6474561");
+                          print(Constants.user_data);
+                          print(Constants.user_data['user']['phoneNo']);
+                          print("123456");
+                          print(Constants.phoneNo);
                           (widget.alreadyExist)
                               ? Navigator.push(
                                   context,

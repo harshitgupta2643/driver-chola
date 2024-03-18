@@ -11,11 +11,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'Pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseAppCheck.instance.activate();
   // await Firebase.initializeApp();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -43,6 +45,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chola Chariots',
       theme: ThemeData(
+        fontFamily: 'Poppins',
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFFFF8D7)),
         useMaterial3: true,
       ),
@@ -82,22 +85,36 @@ class _MyHomePageState extends State<MyHomePage> {
     var size = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.only(
-        bottom: size.height * 0.13,
+        bottom: size.height * 0.1,
+        top: size.height * 0.1,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Image.asset(
                 'assets/Chola_Logo.png',
                 width: size.width,
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              Image.asset(
-                'assets/tagLine.png',
-                width: size.width * 0.6,
+              // Image.asset(
+              //   'assets/tagLine.png',
+              //   width: size.width * 0.6,
+              // ),
+              Text(
+                'Drive with CHOLA\n              Own a Chariot',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: size.shortestSide * 0.05867,
+                  fontFamily: 'RacingSansOne',
+                  fontWeight: FontWeight.w400,
+                  height: 0,
+                  letterSpacing: 1.43,
+                ),
               ),
             ],
           ),
@@ -112,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               child: AgreeButton(
                 buttonText: "Get Started",
-                borderRadius: 0,
+                borderRadius: 12,
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -126,11 +143,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 },
                 suffixWidget: Icon(
-                  Icons.arrow_forward,
+                  Icons.double_arrow,
                   color: Colors.white,
                 ),
-                padding: 0.9,
-                fontSize: MediaQuery.of(context).size.shortestSide * 0.07,
+                padding: 0.7,
+                fontSize: MediaQuery.of(context).size.shortestSide * 0.0533,
               ),
             ),
           ),

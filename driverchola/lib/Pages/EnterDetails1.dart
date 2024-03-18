@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/PartnerPreForm.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
@@ -27,27 +28,27 @@ class _EnterDetails1State extends State<EnterDetails1> {
   TextEditingController state = TextEditingController();
   TextEditingController city = TextEditingController();
 
-  updateCity(String cityName) async {
-    print('dhjbcjdkbcdkj');
-    // print(dialCode.runtimeType);
-    var response = await http.put(
-      Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${widget.jwt}',
-      },
-      body: jsonEncode({
-        'cityName': cityName,
-      }),
-    );
-    print(response.body);
-    if (response.statusCode == 200) {
-      print(json.decode(response.body).runtimeType);
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to update City.');
-    }
-  }
+  // updateCity(String cityName) async {
+  //   print('dhjbcjdkbcdkj');
+  //   // print(dialCode.runtimeType);
+  //   var response = await http.put(
+  //     Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer ${widget.jwt}',
+  //     },
+  //     body: jsonEncode({
+  //       'cityName': cityName,
+  //     }),
+  //   );
+  //   print(response.body);
+  //   if (response.statusCode == 200) {
+  //     print(json.decode(response.body).runtimeType);
+  //     return json.decode(response.body);
+  //   } else {
+  //     throw Exception('Failed to update City.');
+  //   }
+  // }
 
   @override
   void initState() {
@@ -105,7 +106,7 @@ class _EnterDetails1State extends State<EnterDetails1> {
                       country: country,
                       state: state,
                       city: city,
-                      dialogColor: Constants.themeColor,
+                      dialogColor: Colors.white,
                       textFieldDecoration: InputDecoration(
                         fillColor: Colors.white,
                         filled: true,
@@ -177,14 +178,15 @@ class _EnterDetails1State extends State<EnterDetails1> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           try {
-                            Map<String, dynamic> result = await updateCity(
+                            Map<String, dynamic> result = await ApiCollection.updateCity(
                               city.text.toUpperCase(),
                             );
 
                             setState(() {
                               data = result;
+                              Constants.user_data = result;
                             });
-                            print(data['cityName']);
+                            // print(data["user"]['cityName']);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -196,12 +198,13 @@ class _EnterDetails1State extends State<EnterDetails1> {
                           }
                         }
                       },
-                      padding: 0.9,
-                      borderRadius: 0,
+                      padding: 0.65,
+                      borderRadius: 12,
                       suffixWidget: Icon(
-                        Icons.arrow_forward,
+                        Icons.double_arrow,
                         color: Colors.white,
                       ),
+                      fontSize: size.shortestSide * 0.05333,
                     ),
                   ],
                 ),

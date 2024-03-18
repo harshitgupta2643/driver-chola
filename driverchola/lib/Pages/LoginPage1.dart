@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
 import 'package:chola_driver_flutter/Pages/ComingSoon.dart';
@@ -13,30 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-createPhoneNumber(String phoneNo, String dialCode) async {
-  // print('dhjbcjdkbcdkj');
-  // print(dialCode.runtimeType);
-  var response = await http.post(
-    Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/enter'),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonEncode({
-      'phoneNo': phoneNo.toString(),
-      'countryCode': dialCode.toString(),
-      'user_Type': 1,
-      'auth_Type': 0,
-    }),
-  );
-  print(response.body);
-  if (response.statusCode == 200) {
-    print(json.decode(response.body).runtimeType);
-    return json.decode(response.body);
-  } else {
-    throw Exception('Failed to create PhoneNumber.');
-  }
-}
 
 class LoginPage1 extends StatefulWidget {
   const LoginPage1({super.key});
@@ -101,8 +78,10 @@ class _LoginPage1State extends State<LoginPage1> {
                       maxLines: 1,
                       style: TextStyle(
                         color: Colors.black,
+                        fontSize: size.shortestSide * 0.0533,
+                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
-                        fontSize: size.shortestSide * 0.06,
+                        height: 0,
                       ),
                     ),
                   ),
@@ -141,8 +120,9 @@ class _LoginPage1State extends State<LoginPage1> {
                           favorite: ['+91', 'IN'],
                           // optional. Shows only country name and flag when popup is closed.
                           showCountryOnly: false,
+
                           // optional. Shows the dialog
-                          showOnlyCountryWhenClosed: false,
+                          showOnlyCountryWhenClosed: true,
                           showDropDownButton: true,
                           dialogBackgroundColor: Constants.themeColor,
                           // barrierColor: Colors.amberAccent,
@@ -162,7 +142,7 @@ class _LoginPage1State extends State<LoginPage1> {
                           ),
                           // flagWidth: size.width * 0.1,
 
-                          hideMainText: true,
+                          hideMainText: false,
                           // optional. aligns the flag and the Text left
                           alignLeft: false,
                           // optional. shows the flag instead
@@ -182,22 +162,26 @@ class _LoginPage1State extends State<LoginPage1> {
                       SizedBox(
                         width: size.width * 0.02,
                       ),
-                      Expanded(
-                        flex: 2,
-                        child: Field(
-                          labelText: "",
-                          hintText: "Phone Number",
-                          vertical: 0.03,
-                          horizontal: 0.04,
-                          fieldController: phoneNumberController,
-                          focusNode: _phoneNumberFocusNode,
-                          maxLength: 10,
-                          // prefixText: dialCode + " ",
-                          keyboardType: TextInputType.number,
-                          snackbarText: '* Required',
-                        ),
-                      )
+                      // Expanded(
+                      //   flex: 2,
+                      //   child:
+                      // )
                     ],
+                  ),
+                  SizedBox(
+                    height: size.height * 0.02,
+                  ),
+                  Field(
+                    labelText: "",
+                    hintText: "Phone Number",
+                    vertical: 0.03,
+                    horizontal: 0.04,
+                    fieldController: phoneNumberController,
+                    focusNode: _phoneNumberFocusNode,
+                    maxLength: 10,
+                    prefixText: dialCode + " ",
+                    keyboardType: TextInputType.number,
+                    snackbarText: '* Required',
                   ),
                   SizedBox(
                     height: size.height * 0.02,
@@ -217,51 +201,61 @@ class _LoginPage1State extends State<LoginPage1> {
                             phoneNumber: dialCode + phoneNumberController.text,
                             verificationCompleted:
                                 (PhoneAuthCredential credential) {},
-                            verificationFailed: (FirebaseAuthException e) {},
+                            verificationFailed: (FirebaseAuthException e) {
+                              // Handle verification failure
+                              Constants.showError(
+                                  context, 'Verification failed: ${e.message}');
+                              setState(() {
+                                isLoading = false;
+                              });
+                            },
                             codeSent: (String verificationId,
                                 int? resendToken) async {
-                          Map<String, dynamic> result = await createPhoneNumber(
-                            phoneNumberController.text,
-                            dialCode,
-                          );
-                          setState(() {
-                            data = result;
-                            Constants.phoneNo = phoneNumberController.text;
-                          });
-                          print(data['message']);
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PhoneVerify(
-                                verificationId: verificationId,
-                                phoneNumber:
-                                    dialCode + " " + phoneNumberController.text,
-                                alreadyExist: data['alreadyExist'] as bool,
-                                jwt: data['jwt'] as String,
-                              ),
-                            ),
-                          );
-                          setState(() {
-                            isLoading = false;
-                          });
+                              // Handle code sent
+                              Map<String, dynamic> result =
+                                  await ApiCollection.createPhoneNumber(
+                                phoneNumberController.text,
+                                dialCode,
+                              );
+                              setState(() {
+                                data = result;
+                                Constants.user_data = result;
+                              });
+                              print(data['message']);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PhoneVerify(
+                                    verificationId: verificationId,
+                                    phoneNumber: dialCode +
+                                        " " +
+                                        phoneNumberController.text,
+                                    alreadyExist: data['alreadyExist'] as bool,
+                                    jwt: data['jwt'] as String,
+                                  ),
+                                ),
+                              );
+                              setState(() {
+                                isLoading = false;
+                              });
                             },
                             codeAutoRetrievalTimeout: (verificationId) {},
                           );
                         } catch (e) {
+                          Constants.showError(context, 'Exception: $e');
                           setState(() {
                             isLoading = false;
                           });
-                          print('Exception: $e');
                         }
                       }
                     },
-                    padding: 0.9,
-                    borderRadius: 0,
+                    padding: 0.65,
+                    borderRadius: 12,
                     suffixWidget: Icon(
-                      Icons.arrow_forward,
+                      Icons.double_arrow,
                       color: Colors.white,
                     ),
+                    fontSize: size.shortestSide * 0.05333,
                   ),
                   SizedBox(
                     height: size.height * 0.04,
@@ -312,7 +306,7 @@ class _LoginPage1State extends State<LoginPage1> {
                   ),
                   AgreeButton(
                     buttonText: "Continue With Facebook",
-                    fontSize: size.shortestSide * 0.05,
+                    fontSize: size.shortestSide * 0.03733,
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -339,7 +333,7 @@ class _LoginPage1State extends State<LoginPage1> {
                   ),
                   AgreeButton(
                     buttonText: "Continue With Google",
-                    fontSize: size.shortestSide * 0.05,
+                    fontSize: size.shortestSide * 0.03733,
                     onPressed: () {
                       // Navigator.push(
                       //   context,

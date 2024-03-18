@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
+import 'package:chola_driver_flutter/Widgets/BottomLine.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:chola_driver_flutter/Widgets/ImagePicker.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class Insurance extends StatefulWidget {
   const Insurance({
@@ -25,10 +29,94 @@ class _InsuranceState extends State<Insurance> {
   TextEditingController expiryController = TextEditingController();
   DateTime? selectedDate;
   FocusNode _insuranceFocus = FocusNode();
+  bool isLoading = false;
+  late SharedPreferences _prefs;
+  String frontImageUrl = '';
+  String backImageUrl = '';
+
   @override
   void initState() {
     super.initState();
+    _initializePrefs();
     _insuranceFocus.requestFocus();
+  }
+
+  Future<void> _initializePrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    // if (_prefs == null) {
+    //   _prefs = await SharedPreferences.getInstance();
+    // }
+    if (mounted) {
+      setState(() {
+        insuranceController.text = _prefs.getString('insurance') ?? '';
+        expiryController.text = _prefs.getString('insuranceExpiry') ?? '';
+
+        // Load front and back image URLs
+        String? frontImageUrl = _prefs.getString('insuranceFrontUrl');
+        String? backImageUrl = _prefs.getString('insuranceBackUrl');
+        print(frontImageUrl);
+        print(backImageUrl);
+
+        if (_insuranceFrontImageFile != null)
+          _insuranceFrontImageFile = File(frontImageUrl!.toString());
+        if (_insuranceBackImageFile != null)
+          _insuranceBackImageFile = File(backImageUrl!.toString());
+      });
+    }
+  }
+
+  Future<void> _saveData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await _prefs.setString('insurance', insuranceController.text);
+    await _prefs.setString('insuranceExpiry', expiryController.text);
+    if (_insuranceFrontImageFile != null) {
+      frontImageUrl = await uploadFile(
+          _insuranceFrontImageFile, 'insurance', 'insuranceFront');
+      if (mounted) {
+        await _prefs.setString('insuranceFrontUrl', frontImageUrl);
+      }
+    }
+    if (_insuranceBackImageFile != null) {
+      backImageUrl = await uploadFile(
+          _insuranceBackImageFile, 'insurance', 'insuranceBack');
+      if (mounted) {
+        await _prefs.setString('insuranceBackUrl', backImageUrl);
+      }
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<String> uploadFile(
+      File? _imageFile, String docsName, String fileName) async {
+    if (_imageFile == null) return '';
+    final destination = '${Constants.phoneNo}/${docsName}/${fileName}';
+
+    try {
+      print('object');
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref(destination)
+          .child('${fileName}/');
+      print('123');
+      await ref.putFile(_imageFile);
+      print('object2');
+      String downloadURL = await ref.getDownloadURL();
+      print('object3');
+      print(downloadURL);
+      return downloadURL;
+    } catch (e) {
+      print('error occurred');
+      return '';
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -84,9 +172,11 @@ class _InsuranceState extends State<Insurance> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: size.shortestSide * 0.06,
                   color: Colors.black,
+                  fontSize: size.shortestSide * 0.0533,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
               ),
               SizedBox(
@@ -114,9 +204,11 @@ class _InsuranceState extends State<Insurance> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: size.shortestSide * 0.06,
                   color: Colors.black,
+                  fontSize: size.shortestSide * 0.0533,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
               ),
               SizedBox(
@@ -170,9 +262,11 @@ class _InsuranceState extends State<Insurance> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: size.shortestSide * 0.055,
                   color: Colors.black,
+                  fontSize: size.shortestSide * 0.0533,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
               ),
               Text(
@@ -194,6 +288,8 @@ class _InsuranceState extends State<Insurance> {
                   horizontal: size.width * 0.04,
                 ),
                 child: ImagePickerButton(
+                  docsName: 'Insurance',
+                  fileName: 'InsuranceFront',
                   onImagePicked: (file) {
                     setState(() {
                       _insuranceFrontImageFile = file;
@@ -209,9 +305,11 @@ class _InsuranceState extends State<Insurance> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: size.shortestSide * 0.055,
                   color: Colors.black,
+                  fontSize: size.shortestSide * 0.0533,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
               ),
               Text(
@@ -233,6 +331,8 @@ class _InsuranceState extends State<Insurance> {
                   horizontal: size.width * 0.04,
                 ),
                 child: ImagePickerButton(
+                  docsName: 'Insurance',
+                  fileName: 'InsuranceBack',
                   onImagePicked: (file) {
                     setState(() {
                       _insuranceBackImageFile = file;
@@ -248,64 +348,95 @@ class _InsuranceState extends State<Insurance> {
                 child: Center(
                   child: Column(
                     children: [
-                      AgreeButton(
-                        buttonText: "Save & Continue",
-                        onPressed: () {
-                          if (insuranceController.text.isEmpty) {
-                            Constants.showError(
-                              context,
-                              "Please enter your Insurance number",
-                            );
-                          } else if (_insuranceFrontImageFile == null) {
-                            Constants.showError(
-                              context,
-                              "Please Attach/Take Picture of Insurance Front",
-                            );
-                          } else if (_insuranceBackImageFile == null) {
-                            Constants.showError(
-                              context,
-                              "Please Attach/Take Picture of Insurance Back",
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddDocument(
-                                  isVerifyAadhar: true,
-                                  isVerifyPan: true,
-                                  isVerifyDriverLicense: true,
-                                  isVerifyRC: true,
-                                  isVerifyInsurance: true,
-                                  isVerifyPermanentAddress: true,
-                                  isVerifyPhoto: true,
-                                  isVerifyVehicle: true,
-                                  isVerifyBankAccount: true,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        padding: 0.7,
+                      Visibility(
+                        visible: !isLoading,
+                        child: AgreeButton(
+                          buttonText: "Save & Continue",
+                          onPressed: () async {
+                            if (insuranceController.text.isEmpty) {
+                              Constants.showError(
+                                context,
+                                "Please enter your Insurance number",
+                              );
+                            } else if (_insuranceFrontImageFile == null) {
+                              Constants.showError(
+                                context,
+                                "Please Attach/Take Picture of Insurance Front",
+                              );
+                            } else if (_insuranceBackImageFile == null) {
+                              Constants.showError(
+                                context,
+                                "Please Attach/Take Picture of Insurance Back",
+                              );
+                            } else {
+                              await _saveData();
+                              setState(() {
+                                isLoading = true;
+                              });
+                              print(insuranceController.text);
+                              print(expiryController.text);
+                              print(frontImageUrl);
+                              print(backImageUrl);
+                              try {
+                                await ApiCollection.updateCarInsurance(
+                                  insuranceController.text,
+                                  expiryController.text,
+                                  frontImageUrl,
+                                  backImageUrl,
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddDocument(
+                                      isVerifyAadhar: true,
+                                      isVerifyPan: true,
+                                      isVerifyDriverLicense: true,
+                                      isVerifyRC: true,
+                                      isVerifyInsurance: true,
+                                      isVerifyPermanentAddress: true,
+                                      isVerifyPhoto: true,
+                                      isVerifyVehicle: true,
+                                      isVerifyBankAccount: true,
+                                    ),
+                                  ),
+                                );
+                              } catch (e) {
+                                Constants.showError(
+                                    context, 'Something went wrong! Try Again');
+                                print('Expection - $e');
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
+                            }
+                          },
+                          padding: 0.7,
+                        ),
+                      ),
+                      Visibility(
+                        visible: isLoading,
+                        child: CircularProgressIndicator(),
                       ),
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      Expanded(
-                        child: LayoutBuilder(builder: (context, constraints) {
-                          double fontSize = constraints.maxWidth * 0.04;
-                          return Text(
-                            'Upload all Documents to start earning with CHOLA.',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: fontSize,
-                              color: Colors.black,
-                            ),
-                          );
-                        }),
-                      ),
+                      bottomLine(),
+                      // Expanded(
+                      //   child: LayoutBuilder(builder: (context, constraints) {
+                      //     double fontSize = constraints.maxWidth * 0.04;
+                      //     return Text(
+                      //       'Upload all Documents to start earning with CHOLA.',
+                      //       overflow: TextOverflow.ellipsis,
+                      //       maxLines: 1,
+                      //       textAlign: TextAlign.center,
+                      //       style: TextStyle(
+                      //         fontWeight: FontWeight.w500,
+                      //         fontSize: fontSize,
+                      //         color: Colors.black,
+                      //       ),
+                      //     );
+                      //   }),
+                      // ),
                     ],
                   ),
                 ),

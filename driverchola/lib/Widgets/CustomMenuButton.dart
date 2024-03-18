@@ -20,6 +20,7 @@ class CustomMenuIconButton extends StatelessWidget {
         // onPressed();
       },
       icon: CircleAvatar(
+        radius: MediaQuery.of(context).size.width * 0.07,
         backgroundColor: Colors.black,
         child: Padding(
           padding: EdgeInsets.symmetric(

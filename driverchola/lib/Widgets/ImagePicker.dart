@@ -1,31 +1,65 @@
 import 'dart:io';
 
+import 'package:chola_driver_flutter/Constants/Constants.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerButton extends StatefulWidget {
   final Function(File)? onImagePicked;
+  final String docsName;
+  final String fileName;
 
-  const ImagePickerButton({Key? key, this.onImagePicked}) : super(key: key);
+  const ImagePickerButton(
+      {Key? key,
+      this.onImagePicked,
+      required this.docsName,
+      required this.fileName})
+      : super(key: key);
 
   @override
   _ImagePickerButtonState createState() => _ImagePickerButtonState();
 }
 
 class _ImagePickerButtonState extends State<ImagePickerButton> {
+  firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
   File? _imageFile;
+  // bool _isLoading = false;
 
   Future<void> _getImage(ImageSource source) async {
     final pickedFile = await ImagePicker().pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
+        // _isLoading = true; // Start loading
       });
+      // await uploadFile(); // Wait for the file to upload
+      // setState(() {
+      //   _isLoading = false; // Stop loading
+      // });
       if (widget.onImagePicked != null) {
         widget.onImagePicked!(_imageFile!);
       }
     }
   }
+
+  // Future<void> uploadFile() async {
+  //   if (_imageFile == null) return;
+  //   final fileName = basename(_imageFile!.path);
+  //   final destination =
+  //       '${Constants.phoneNo}/${widget.docsName}/${widget.fileName}';
+
+  //   try {
+  //     final ref = firebase_storage.FirebaseStorage.instance
+  //         .ref(destination)
+  //         .child('${widget.fileName}/');
+  //     await ref.putFile(_imageFile!);
+  //   } catch (e) {
+  //     print('error occurred');
+  //   }
+  // }
 
   void showImagePickerDialog(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -69,6 +103,7 @@ class _ImagePickerButtonState extends State<ImagePickerButton> {
     var size = MediaQuery.of(context).size;
     return Column(
       children: [
+        // if (_isLoading) CircularProgressIndicator(), // Show loading indicator
         if (_imageFile != null)
           GestureDetector(
             onTap: () {
@@ -119,6 +154,133 @@ class _ImagePickerButtonState extends State<ImagePickerButton> {
               child: Center(
                 child: Text(
                   "Choose from phone/click image",
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                    fontSize: size.shortestSide * 0.05,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class FilePickerButton extends StatefulWidget {
+  final Function(File)? onFilePicked;
+
+  const FilePickerButton({Key? key, this.onFilePicked}) : super(key: key);
+
+  @override
+  _FilePickerButtonState createState() => _FilePickerButtonState();
+}
+
+class _FilePickerButtonState extends State<FilePickerButton> {
+  File? _file;
+
+  Future<void> _getFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      setState(() {
+        _file = File(result.files.single.path!);
+      });
+      if (widget.onFilePicked != null) {
+        widget.onFilePicked!(_file!);
+      }
+    }
+  }
+
+  // void showFilePickerDialog(BuildContext context) {
+  //   final size = MediaQuery.of(context).size;
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       backgroundColor: Colors.transparent,
+  //       title: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //         children: [
+  //           TextButton(
+  //             onPressed: () {
+  //               _getFile();
+  //               Navigator.pop(context);
+  //             },
+  //             child: Icon(
+  //               Icons.folder_rounded,
+  //               size: size.height * 0.07,
+  //               color: Colors.amber,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        if (_file != null)
+          GestureDetector(
+            onTap: () {
+              _getFile();
+              // showFilePickerDialog(context);
+            },
+            child: Container(
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(0),
+                ),
+                color: Colors.white,
+              ),
+              child: Text(
+                _file!.path,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                  fontSize: size.shortestSide * 0.05,
+                ),
+              ),
+            ),
+          ),
+        if (_file == null)
+          GestureDetector(
+            onTap: () {
+              // showFilePickerDialog(context);
+              _getFile();
+            },
+            child: Container(
+              height: size.height * 0.1,
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                color: Colors.white,
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * 0.02,
+                vertical: size.height * 0.02,
+              ),
+              child: Center(
+                child: Text(
+                  "Choose file",
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   textAlign: TextAlign.center,

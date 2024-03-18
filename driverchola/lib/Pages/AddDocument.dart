@@ -1,6 +1,7 @@
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddAadharCard.dart';
 import 'package:chola_driver_flutter/Pages/AddBankAccount.dart';
+import 'package:chola_driver_flutter/Pages/AddDocumnetsScreen.dart';
 import 'package:chola_driver_flutter/Pages/AddDrivingLicense.dart';
 import 'package:chola_driver_flutter/Pages/AddInsurance.dart';
 import 'package:chola_driver_flutter/Pages/AddLivePhoto.dart';
@@ -8,6 +9,7 @@ import 'package:chola_driver_flutter/Pages/AddPan.dart';
 import 'package:chola_driver_flutter/Pages/AddParmanentAddress.dart';
 import 'package:chola_driver_flutter/Pages/AddRCCard.dart';
 import 'package:chola_driver_flutter/Pages/AddVehicle.dart';
+import 'package:chola_driver_flutter/Pages/AdditionalDocs.dart';
 import 'package:chola_driver_flutter/Pages/Verifying.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
@@ -26,6 +28,7 @@ class AddDocument extends StatefulWidget {
   final bool? isVerifyVehicle;
   final bool? isVerifyPermanentAddress;
   final bool? isVerifyBankAccount;
+  final bool? isVerifyConsult;
   const AddDocument({
     super.key,
     this.isVerifyAadhar,
@@ -37,6 +40,7 @@ class AddDocument extends StatefulWidget {
     this.isVerifyVehicle,
     this.isVerifyPermanentAddress,
     this.isVerifyBankAccount,
+    this.isVerifyConsult,
   });
 
   @override
@@ -58,6 +62,7 @@ class _AddDocumentState extends State<AddDocument> {
   // bool isVerifyAcknowledgement = false;
   bool isVerifyBankAccount = false;
   bool isVerifyCheck = false;
+  bool isVerifyConsult = false;
 
   final LocalAuthentication auth = LocalAuthentication();
 
@@ -73,11 +78,17 @@ class _AddDocumentState extends State<AddDocument> {
     isVerifyVehicle = widget.isVerifyVehicle ?? false;
     isVerifyPermanentAddress = widget.isVerifyPermanentAddress ?? false;
     isVerifyBankAccount = widget.isVerifyBankAccount ?? false;
+    isVerifyConsult = widget.isVerifyConsult ?? false;
   }
 
   void setAadharVerify(bool value) {
     setState(() {
       isVerifyAadhar = value;
+    });
+  }
+  void setConsultVerify(bool value) {
+    setState(() {
+      isVerifyConsult = value;
     });
   }
 
@@ -174,6 +185,23 @@ class _AddDocumentState extends State<AddDocument> {
                   ),
                   DocumentButton(
                     isEnable: isVerifyPermanentAddress,
+                    label: 'LivePhoto',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LivePhoto(),
+                        ),
+                      ).then((value) {
+                        if (value != null && value is bool) {
+                          setPhotoVerify(value);
+                        }
+                      });
+                    },
+                    isVerify: isVerifyPhoto,
+                  ),
+                  DocumentButton(
+                    isEnable: isVerifyPhoto,
                     label: 'Aadhar Card',
                     onPressed: () {
                       Navigator.push(
@@ -240,25 +268,9 @@ class _AddDocumentState extends State<AddDocument> {
                     },
                     isVerify: isVerifyBankAccount,
                   ),
+                  
                   DocumentButton(
                     isEnable: isVerifyBankAccount,
-                    label: 'LivePhoto',
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LivePhoto(),
-                        ),
-                      ).then((value) {
-                        if (value != null && value is bool) {
-                          setPhotoVerify(value);
-                        }
-                      });
-                    },
-                    isVerify: isVerifyPhoto,
-                  ),
-                  DocumentButton(
-                    isEnable: isVerifyPhoto,
                     label: 'Vehicle Details',
                     onPressed: () {
                       Navigator.push(
@@ -307,6 +319,23 @@ class _AddDocumentState extends State<AddDocument> {
                       });
                     },
                     isVerify: isVerifyInsurance,
+                  ),
+                  DocumentButton(
+                    isEnable: isVerifyInsurance,
+                    label: 'Consult',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdditionalDocumnets(),
+                        ),
+                      ).then((value) {
+                        if (value != null && value is bool) {
+                          setConsultVerify(value);
+                        }
+                      });
+                    },
+                    isVerify: isVerifyConsult,
                   ),
                   // DocumentButton(
                   //   isEnable: isVerifyInsurance,

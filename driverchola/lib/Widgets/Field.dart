@@ -15,6 +15,7 @@ class Field extends StatelessWidget {
   final Widget? prefixWidget;
   final bool? isEditable;
   final bool? obscureText;
+  final bool? isLabel;
   final VoidCallback? onTap;
   final void Function(String)? onChanged;
   final BorderSide? borderColor;
@@ -30,6 +31,7 @@ class Field extends StatelessWidget {
     this.icon,
     this.obscureText,
     this.validator,
+    this.isLabel = false,
     this.keyboardType,
     this.focusNode,
     required this.vertical,
@@ -49,56 +51,81 @@ class Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: TextFormField(
-        onChanged: (value) {
-          onChanged?.call(value);
-        },
-        controller: fieldController,
-        obscureText: obscureText ?? false,
-        enabled: isEditable,
-        focusNode: focusNode,
-        keyboardType: keyboardType,
-        maxLength: maxLength,
-        decoration: InputDecoration(
-          labelText: labelText,
+    // isLabel = false;
+    return Column(
+      children: [
+        (labelText.length != 0 && isLabel!)
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Text(
+                    labelText,
+                    textAlign: TextAlign.left,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: MediaQuery.of(context).size.width * 0.045,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
+        GestureDetector(
+          onTap: onTap,
+          child: TextFormField(
+            onChanged: (value) {
+              onChanged?.call(value);
+            },
+            controller: fieldController,
+            obscureText: obscureText ?? false,
+            enabled: isEditable,
+            focusNode: focusNode,
+            keyboardType: keyboardType,
+            maxLength: maxLength,
+            decoration: InputDecoration(
+              // labelText: labelText,
 
-          labelStyle: TextStyle(
-            // fontFamily: 'Roboto Flex',
-            fontWeight: FontWeight.w600,
-            fontSize: MediaQuery.of(context).size.width * 0.045,
-          ),
-          hintText: hintText,
-          filled: true,
-          fillColor: Color.fromARGB(255, 255, 255, 255),
-          icon: icon,
-          suffixIcon: suffixWidget,
+              // labelStyle: TextStyle(
+              //   // fontFamily: 'Roboto Flex',
+              //   fontWeight: FontWeight.w600,
+              //   fontSize: MediaQuery.of(context).size.width * 0.045,
+              // ),
+              hintText: hintText,
+              filled: true,
+              fillColor: Color.fromARGB(255, 255, 255, 255),
+              icon: icon,
+              suffixIcon: suffixWidget,
 
-          prefixIcon: prefixWidget,
-          prefixText: prefixText,
-          prefixStyle: TextStyle(
-            color: Colors.black,
-            fontSize: MediaQuery.of(context).size.width * 0.045,
-          ),
-          // prefix: prefixWidget,
-          contentPadding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.shortestSide * vertical,
-            horizontal: MediaQuery.of(context).size.shortestSide * horizontal,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(borderRadius ?? 10.0),
-            borderSide: borderColor ?? BorderSide(color: Colors.black),
+              prefixIcon: prefixWidget,
+              prefixText: prefixText,
+              prefixStyle: TextStyle(
+                color: Colors.black,
+                fontSize: MediaQuery.of(context).size.width * 0.040,
+              ),
+              // prefix: prefixWidget,
+              contentPadding: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.shortestSide * vertical,
+                horizontal:
+                    MediaQuery.of(context).size.shortestSide * horizontal,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(borderRadius ?? 10.0),
+                borderSide: borderColor ?? BorderSide(color: Colors.black),
+              ),
+            ),
+            validator: validator ??
+                (value) {
+                  if (value == null || value.isEmpty) {
+                    return snackbarText;
+                  }
+                  return null;
+                },
           ),
         ),
-        validator: validator ??
-            (value) {
-              if (value == null || value.isEmpty) {
-                return snackbarText;
-              }
-              return null;
-            },
-      ),
+      ],
     );
   }
 }

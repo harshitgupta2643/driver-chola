@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/AddDocument.dart';
+import 'package:chola_driver_flutter/Widgets/BottomLine.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
 import 'package:chola_driver_flutter/Widgets/Date.dart';
@@ -9,6 +11,8 @@ import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:chola_driver_flutter/Widgets/ImagePicker.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class DrivingLicense extends StatefulWidget {
   const DrivingLicense({
@@ -26,11 +30,89 @@ class _DrivingLicenseState extends State<DrivingLicense> {
   bool isVerify = false;
   File? _frontImageFile;
   File? _backImageFile;
+  String frontImageUrl = '';
+  String backImageUrl = '';
   FocusNode _drivingFocus = FocusNode();
+  late SharedPreferences _prefs;
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
     _drivingFocus.requestFocus();
+    _loadData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _drivingFocus.dispose();
+  }
+
+  Future<void> _loadData() async {
+    _prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        licenseController.text = _prefs.getString('license') ?? '';
+        expiryController.text = _prefs.getString('expirydate') ?? '';
+
+        // Load front and back image URLs
+        String? frontImageUrl = _prefs.getString('licenseFrontUrl');
+        String? backImageUrl = _prefs.getString('licenseBackUrl');
+        print(frontImageUrl);
+        print(backImageUrl);
+        _frontImageFile = frontImageUrl != null ? File(frontImageUrl) : null;
+        _backImageFile = backImageUrl != null ? File(backImageUrl) : null;
+      });
+    }
+  }
+
+  Future<void> _saveData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await _prefs.setString('license', licenseController.text);
+    await _prefs.setString('expirydate', expiryController.text);
+    if (_frontImageFile != null) {
+      frontImageUrl =
+          await uploadFile(_frontImageFile, 'license', 'licenseFront');
+      if (mounted) {
+        await _prefs.setString('licenseFrontUrl', frontImageUrl);
+      }
+    }
+    if (_backImageFile != null) {
+      backImageUrl = await uploadFile(_backImageFile, 'license', 'licenseBack');
+      if (mounted) {
+        await _prefs.setString('licenseBackUrl', backImageUrl);
+      }
+    }
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<String> uploadFile(
+      File? _imageFile, String docsName, String fileName) async {
+    if (_imageFile == null) return '';
+    final destination = '${Constants.phoneNo}/${docsName}/${fileName}';
+
+    try {
+      print('object');
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref(destination)
+          .child('${fileName}/');
+      print('123');
+      await ref.putFile(_imageFile);
+      print('object2');
+      String downloadURL = await ref.getDownloadURL();
+      print('object3');
+      print(downloadURL);
+      return downloadURL;
+    } catch (e) {
+      print('error occurred');
+      return '';
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -81,9 +163,11 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: size.shortestSide * 0.06,
                   color: Colors.black,
+                  fontSize: size.shortestSide * 0.0533,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
               ),
               SizedBox(
@@ -109,9 +193,11 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: size.shortestSide * 0.06,
                   color: Colors.black,
+                  fontSize: size.shortestSide * 0.0533,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
               ),
               SizedBox(
@@ -165,9 +251,11 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: size.shortestSide * 0.055,
                   color: Colors.black,
+                  fontSize: size.shortestSide * 0.0533,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
               ),
               Text(
@@ -189,6 +277,8 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                   horizontal: size.width * 0.04,
                 ),
                 child: ImagePickerButton(
+                  docsName: 'DrivingLicense',
+                  fileName: 'DrivingLicenseFront',
                   onImagePicked: (file) {
                     setState(() {
                       _frontImageFile = file;
@@ -204,9 +294,11 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: size.shortestSide * 0.055,
                   color: Colors.black,
+                  fontSize: size.shortestSide * 0.0533,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
               ),
               Text(
@@ -228,6 +320,8 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                   horizontal: size.width * 0.04,
                 ),
                 child: ImagePickerButton(
+                  docsName: 'DrivingLicense',
+                  fileName: 'DrivingLicenseBack',
                   onImagePicked: (file) {
                     setState(() {
                       _backImageFile = file;
@@ -243,59 +337,75 @@ class _DrivingLicenseState extends State<DrivingLicense> {
                 child: Center(
                   child: Column(
                     children: [
-                      AgreeButton(
-                        buttonText: "Save & Continue",
-                        onPressed: () {
-                          if (licenseController.length > 16) {
-                            Constants.showError(
-                              context,
-                              "Please enter a valid License number. License numbers in India are up to 16 characters long.",
-                            );
-                          } else if (_frontImageFile == null) {
-                            Constants.showError(
-                              context,
-                              "Please upload a valid Front Image of your driving license .",
-                            );
-                          } else if (_backImageFile == null) {
-                            Constants.showError(
-                              context,
-                              "Please upload a valid Back Image of your driving license .",
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddDocument(
-                                  isVerifyPermanentAddress: true,
-                                  isVerifyAadhar: true,
-                                  isVerifyDriverLicense: true,
-                                  isVerifyPan: true,
+                      Visibility(
+                        visible: !isLoading,
+                        child: AgreeButton(
+                          buttonText: "Save & Continue",
+                          onPressed: () async {
+                            if (licenseController.length > 16) {
+                              Constants.showError(
+                                context,
+                                "Please enter a valid License number. License numbers in India are up to 16 characters long.",
+                              );
+                            } else if (_frontImageFile == null) {
+                              Constants.showError(
+                                context,
+                                "Please upload a valid Front Image of your driving license .",
+                              );
+                            } else if (_backImageFile == null) {
+                              Constants.showError(
+                                context,
+                                "Please upload a valid Back Image of your driving license .",
+                              );
+                            } else {
+                              await _saveData();
+                              await ApiCollection.updateDrivingLicense(
+                                licenseController.text,
+                                expiryController.text,
+                                frontImageUrl,
+                                backImageUrl,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddDocument(
+                                    isVerifyPermanentAddress: true,
+                                    isVerifyAadhar: true,
+                                    isVerifyDriverLicense: true,
+                                    isVerifyPan: true,
+                                    isVerifyPhoto: true,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }
-                        },
-                        padding: 0.7,
+                              );
+                            }
+                          },
+                          padding: 0.7,
+                        ),
+                      ),
+                      Visibility(
+                        visible: isLoading,
+                        child: CircularProgressIndicator(),
                       ),
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      Expanded(
-                        child: LayoutBuilder(builder: (context, constraints) {
-                          double fontSize = constraints.maxWidth * 0.04;
-                          return Text(
-                            'Upload all Documents to start earning with CHOLA.',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: fontSize,
-                              color: Colors.black,
-                            ),
-                          );
-                        }),
-                      ),
+                      // Expanded(
+                      //   child: LayoutBuilder(builder: (context, constraints) {
+                      //     double fontSize = constraints.maxWidth * 0.04;
+                      //     return Text(
+                      //       'Upload all Documents to start earning with CHOLA.',
+                      //       overflow: TextOverflow.ellipsis,
+                      //       maxLines: 1,
+                      //       textAlign: TextAlign.center,
+                      //       style: TextStyle(
+                      //         fontWeight: FontWeight.w500,
+                      //         fontSize: fontSize,
+                      //         color: Colors.black,
+                      //       ),
+                      //     );
+                      //   }),
+                      // ),
+                      bottomLine(),
                     ],
                   ),
                 ),

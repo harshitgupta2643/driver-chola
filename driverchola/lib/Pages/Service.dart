@@ -265,9 +265,11 @@ class _ServicePageState extends State<ServicePage> {
                       MaterialPageRoute(builder: (context) => HomePage()));
                   break;
                 case 2:
-                  // Navigate to Map page
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => EarningPage()));
+                  // // Navigate to Map page
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context) => EarningPage()));
+                  Constants.showError(context,
+                      'Early Acess App , Features will be available Soon...');
                   break;
                 case 3:
                   // Navigate to Earning page

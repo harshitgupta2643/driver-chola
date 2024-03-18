@@ -1,4 +1,6 @@
 import 'package:chola_driver_flutter/Constants/Constants.dart';
+import 'package:chola_driver_flutter/Pages/AddDocument.dart';
+import 'package:chola_driver_flutter/Pages/AdditionalDocs.dart';
 import 'package:chola_driver_flutter/Pages/HomePage.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
 import 'package:chola_driver_flutter/Widgets/CustomAppbar.dart';
@@ -77,9 +79,9 @@ class _VerifyingState extends State<Verifying> {
                 SizedBox(
                   height: size.height * 0.02,
                 ),
-                Image.asset(
-                  'assets/digiLocker.png',
-                ),
+                // Image.asset(
+                //   'assets/digiLocker.png',
+                // ),
               ],
             ),
           ),

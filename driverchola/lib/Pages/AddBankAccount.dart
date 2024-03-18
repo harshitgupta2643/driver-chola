@@ -65,10 +65,12 @@ class _BankAccountState extends State<BankAccount> {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: size.shortestSide * 0.06,
-                        color: Colors.black,
-                      ),
+                      color: Colors.black,
+                      fontSize: size.shortestSide * 0.0533,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
+                    ),
                     ),
                   ),
                   Padding(

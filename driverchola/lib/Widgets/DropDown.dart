@@ -60,7 +60,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
           GestureDetector(
             onTap: widget.onTap,
             child: DropdownButtonFormField<String>(
-              dropdownColor:Color(0xffeef4fa),
+              dropdownColor: Color(0xffeef4fa),
               isExpanded: true,
               value: widget.controller.text.isNotEmpty
                   ? widget.controller.text
@@ -79,7 +79,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
                 filled: true,
                 fillColor: Colors.white,
                 enabled: widget.isEditable ?? true,
-                labelText: widget.labelText,
+                // labelText: widget.labelText,
                 labelStyle: TextStyle(
                   // color: widget.color ?? ThemeData.light().colorScheme.primary,
                   fontWeight: FontWeight.w900,

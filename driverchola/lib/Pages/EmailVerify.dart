@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/EnterDetails.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
@@ -33,27 +34,27 @@ class _EmailVerifyState extends State<EmailVerify> {
   // EmailOTP myauth = EmailOTP();
   final _emailFormKey = GlobalKey<FormState>();
   Map<String, dynamic> data = {};
-  verifyEmail() async {
-    print('dhjbcjdkbcdkj');
-    // print(dialCode.runtimeType);
-    var response = await http.put(
-      Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${widget.jwt}',
-      },
-      body: jsonEncode({
-        'verified': true,
-      }),
-    );
-    print(response.body);
-    if (response.statusCode == 200) {
-      print(json.decode(response.body).runtimeType);
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to verify Email.');
-    }
-  }
+  // verifyEmail() async {
+  //   print('dhjbcjdkbcdkj');
+  //   // print(dialCode.runtimeType);
+  //   var response = await http.put(
+  //     Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer ${widget.jwt}',
+  //     },
+  //     body: jsonEncode({
+  //       'verified': true,
+  //     }),
+  //   );
+  //   print(response.body);
+  //   if (response.statusCode == 200) {
+  //     print(json.decode(response.body).runtimeType);
+  //     return json.decode(response.body);
+  //   } else {
+  //     throw Exception('Failed to verify Email.');
+  //   }
+  // }
 
   @override
   void initState() {
@@ -198,12 +199,13 @@ class _EmailVerifyState extends State<EmailVerify> {
                               .showSnackBar(const SnackBar(
                             content: Text("OTP is verified"),
                           ));
-                          Map<String, dynamic> result = await verifyEmail();
+                          Map<String, dynamic> result = await ApiCollection.verifyEmail();
 
                           setState(() {
                             data = result;
+                            Constants.user_data = result;
                           });
-                          print(data['phoneNoVerified']);
+                          // print(data['phoneNoVerified']);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

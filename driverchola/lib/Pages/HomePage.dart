@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chola_driver_flutter/Constants/Constants.dart';
 import 'package:chola_driver_flutter/Pages/Earning.dart';
 import 'package:chola_driver_flutter/Pages/Service.dart';
 // import 'package:chola_driver_flutter/Widgets/BackButton.dart';
@@ -117,7 +118,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Scaffold(
         appBar: HomeAppBar(
-          preferredHeight: size.height * 0.08,
+          preferredHeight: size.height * 0.12,
           title: "",
         ),
         body: Stack(
@@ -303,12 +304,9 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           onPressed: () {
-            Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EarningPage(),
-                      ),
-                    );
+            Constants.showError(context,
+                'Early Acess App , Features will be available Soon...');
+
             //Navigator to Earning
           },
           child: Text(
@@ -341,11 +339,11 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: IconButton(
                 onPressed: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(),
-                      ),
-                    );
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(),
+                    ),
+                  );
                 },
                 icon: Icon(
                   Icons.notifications,
@@ -359,6 +357,23 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           decoration: BoxDecoration(
             color: Color(0xFF839DFE),
           ),
+          child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: size.height * 0.01,
+                ),
+                child: Text(
+                  'OWN VEHICLE',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24 / 375 * size.shortestSide,
+                    fontFamily: 'RaviPrakash',
+                    fontWeight: FontWeight.w400,
+                    height: 0,
+                  ),
+                ),
+              )),
         ),
       ),
     );
@@ -476,8 +491,10 @@ class _CustomCollapsedWidgetState extends State<CustomCollapsedWidget> {
               break;
             case 2:
               // Navigate to Map page
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => EarningPage()));
+              // Navigator.push(context,
+              //     MaterialPageRoute(builder: (context) => EarningPage()));
+              Constants.showError(context,
+                  'Early Acess App , Features will be available Soon...');
               break;
             case 3:
               // Navigate to Earning page
