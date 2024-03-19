@@ -46,7 +46,7 @@ class ServiceListTile extends StatelessWidget {
             value: value,
             onChanged: (value) {
               Constants.showError(context,
-                  'Early Acess App , Features will be available Soon...');
+                  "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
             },
           ),
         ),

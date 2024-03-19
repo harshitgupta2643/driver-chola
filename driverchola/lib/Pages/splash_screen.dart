@@ -1,3 +1,5 @@
+import 'package:chola_driver_flutter/Constants/Constants.dart';
+import 'package:chola_driver_flutter/Pages/HomePage.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 // import 'package:chola_chariots_ui/Widgets/LanscapeIcon.dart';
@@ -13,13 +15,22 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 7), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(),
-        ),
-      );
+    Future.delayed(const Duration(seconds: 7), () async {
+      Map<String, dynamic> x = await Constants.fetchResult();
+      print(x['alreadyExist']);
+      (x['alreadyExist'] ?? false)
+          ? Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+              ),
+            )
+          : Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyHomePage(),
+              ),
+            );
     });
   }
 

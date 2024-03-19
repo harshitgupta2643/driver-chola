@@ -269,7 +269,7 @@ class _ServicePageState extends State<ServicePage> {
                   // Navigator.push(context,
                   //     MaterialPageRoute(builder: (context) => EarningPage()));
                   Constants.showError(context,
-                      'Early Acess App , Features will be available Soon...');
+                      "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                   break;
                 case 3:
                   // Navigate to Earning page

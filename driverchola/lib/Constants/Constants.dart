@@ -1,15 +1,45 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:chola_driver_flutter/Constants/ApiCollection.dart';
 import 'package:chola_driver_flutter/Widgets/Buttonfill.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Constants {
+  static Future<void> navigateToUrl() async {
+    String url = await ApiCollection.onUpdateApi();
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  static Future<Map<String, dynamic>> fetchResult() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/result.json');
+      if (await file.exists()) {
+        final content = await file.readAsString();
+        return jsonDecode(content);
+      }
+    } catch (e) {
+      print('Error reading file: $e');
+    }
+    return {};
+  }
+
   static const String apiKey = "AIzaSyCfHVm5xypidpMEUAEuxmie_FDqme9tiLY";
   static const List<String> ads = [
     'https://www.wordstream.com/wp-content/uploads/2021/07/persuasive-ads-coca-cola-1.jpg',
     'https://www.wordstream.com/wp-content/uploads/2021/07/persuasive-ads-street-easy.jpg',
   ];
   static Map<String, dynamic> user_data = {};
+  static Map<String, dynamic> user_data1 = {};
   static Map<String, dynamic> documents_data = {};
   static const List<String> countryCodes = ['+91'];
   static String firstName = '';

@@ -1,9 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:chola_driver_flutter/Constants/Constants.dart';
-import 'package:chola_driver_flutter/Pages/Earning.dart';
+// import 'package:chola_driver_flutter/Pages/Earning.dart';
 import 'package:chola_driver_flutter/Pages/Service.dart';
-// import 'package:chola_driver_flutter/Widgets/BackButton.dart';
 import 'package:chola_driver_flutter/Widgets/CustomMenuButton.dart';
 import 'package:chola_driver_flutter/Widgets/Menu.dart';
 import 'package:flutter/foundation.dart';
@@ -13,6 +13,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:upgrader/upgrader.dart';
 
 class HomePage extends StatefulWidget {
   // final String jwt;
@@ -112,147 +113,169 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Padding(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top,
-      ),
-      child: Scaffold(
-        appBar: HomeAppBar(
-          preferredHeight: size.height * 0.12,
-          title: "",
+    return UpgradeAlert(
+      dialogStyle: (Platform.isIOS)
+          ? UpgradeDialogStyle.cupertino
+          : UpgradeDialogStyle.material,
+      showIgnore: false,
+      showReleaseNotes: false,
+      showLater: false,
+      upgrader: Upgrader(
+        messages: UpgraderMessages(
+          code:
+              'A new version of the app is available. Please update to continue using the app.',
         ),
-        body: Stack(
-          children: [
-            if (currentPosition != null)
-              GoogleMap(
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                mapType: MapType.normal,
-                onMapCreated: (GoogleMapController controller) {
-                  _controller = controller;
-                },
-                initialCameraPosition: CameraPosition(
-                  zoom: 15.0,
-                  target: LatLng(
-                    currentPosition!.latitude,
-                    currentPosition!.longitude,
-                  ),
-                ),
-                gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                  Factory<OneSequenceGestureRecognizer>(
-                    () => EagerGestureRecognizer(),
-                  ),
-                },
-                markers: Set<Marker>.from([
-                  Marker(
-                    markerId: MarkerId("currentLocation"),
-                    position: LatLng(
+        languageCode: 'en',
+      ),
+      onUpdate: () {
+        // Handle update action
+        Constants.navigateToUrl();
+        return false; // Return false to close the dialog
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top,
+        ),
+        child: Scaffold(
+          appBar: HomeAppBar(
+            preferredHeight: size.height * 0.12,
+            title: "",
+          ),
+          body: Stack(
+            children: [
+              if (currentPosition != null)
+                GoogleMap(
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  mapType: MapType.normal,
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller = controller;
+                  },
+                  initialCameraPosition: CameraPosition(
+                    zoom: 15.0,
+                    target: LatLng(
                       currentPosition!.latitude,
                       currentPosition!.longitude,
                     ),
-                    infoWindow: InfoWindow(
-                      title: "Current Location",
-                      snippet: "You are here",
-                    ),
                   ),
-                ]),
-              ),
-            if (currentPosition == null)
-              Center(
-                child: CircularProgressIndicator(),
-              ),
-            Positioned(
-              bottom: size.height * 0.13,
-              left: size.width * 0.03,
-              child: CircleAvatar(
-                backgroundColor: Colors.black,
-                child: IconButton(
-                  onPressed: () {
-                    //privacy  policy and terms of service
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(),
-                      ),
-                    );
+                  gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                    Factory<OneSequenceGestureRecognizer>(
+                      () => EagerGestureRecognizer(),
+                    ),
                   },
-                  icon: Icon(
-                    Icons.privacy_tip,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: size.height * 0.13,
-              right: size.width * 0.03,
-              child: CircleAvatar(
-                backgroundColor: Colors.black,
-                child: IconButton(
-                  onPressed: _moveToCurrentLocation,
-                  icon: Icon(
-                    Icons.my_location,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: size.height * 0.13,
-              right: size.width * 0.4,
-              child: Row(
-                children: [
-                  Transform.scale(
-                    scale: 1.8,
-                    child: Switch(
-                      activeColor: Colors.green,
-                      activeTrackColor: Colors.white,
-                      inactiveTrackColor: Colors.white,
-                      // inactiveThumbColor: Colors.red,
-                      value: switchValue,
-                      onChanged: (value) {
-                        setState(() {
-                          switchValue = value;
-                        });
-                      },
-                      dragStartBehavior: DragStartBehavior.start,
-                      splashRadius: size.height * 0.1,
-                      trackOutlineColor: MaterialStatePropertyAll(
-                        switchValue ? Colors.green : Colors.red,
+                  markers: Set<Marker>.from([
+                    Marker(
+                      markerId: MarkerId("currentLocation"),
+                      position: LatLng(
+                        currentPosition!.latitude,
+                        currentPosition!.longitude,
                       ),
-                      thumbColor: MaterialStatePropertyAll(
-                        switchValue ? Colors.green : Colors.red,
+                      infoWindow: InfoWindow(
+                        title: "Current Location",
+                        snippet: "You are here",
                       ),
                     ),
+                  ]),
+                ),
+              if (currentPosition == null)
+                Center(
+                  child: CircularProgressIndicator(),
+                ),
+              Positioned(
+                bottom: size.height * 0.13,
+                left: size.width * 0.03,
+                child: CircleAvatar(
+                  backgroundColor: Colors.black,
+                  child: IconButton(
+                    onPressed: () {
+                      //privacy  policy and terms of service
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => HomePage(),
+                      //   ),
+                      // );
+                      Constants.showError(context,
+                          "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
+                    },
+                    icon: Icon(
+                      Icons.privacy_tip,
+                      color: Colors.white,
+                    ),
                   ),
-                  // Text(
-                  //   switchValue ? 'Online' : 'Offline',
-                  //   style: TextStyle(
-                  //     color: Colors.black,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                ],
+                ),
               ),
-            ),
-            SlidingUpPanel(
-              controller: _panelController,
-              panel: _panelController != null
-                  ? CustomPanelWidget(panelController: _panelController!)
-                  : Container(),
-              isDraggable: true,
-              collapsed: CustomCollapsedWidget(),
-              minHeight: MediaQuery.of(context).size.height * 0.11,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
+              Positioned(
+                bottom: size.height * 0.13,
+                right: size.width * 0.03,
+                child: CircleAvatar(
+                  backgroundColor: Colors.black,
+                  child: IconButton(
+                    onPressed: _moveToCurrentLocation,
+                    icon: Icon(
+                      Icons.my_location,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
-              maxHeight: MediaQuery.of(context).size.height * 0.5,
-            ),
-          ],
+              Positioned(
+                bottom: size.height * 0.13,
+                right: size.width * 0.4,
+                child: Row(
+                  children: [
+                    Transform.scale(
+                      scale: 1.8,
+                      child: Switch(
+                        activeColor: Colors.green,
+                        activeTrackColor: Colors.white,
+                        inactiveTrackColor: Colors.white,
+                        // inactiveThumbColor: Colors.red,
+                        value: switchValue,
+                        onChanged: (value) {
+                          setState(() {
+                            switchValue = value;
+                          });
+                        },
+                        dragStartBehavior: DragStartBehavior.start,
+                        splashRadius: size.height * 0.1,
+                        trackOutlineColor: MaterialStatePropertyAll(
+                          switchValue ? Colors.green : Colors.red,
+                        ),
+                        thumbColor: MaterialStatePropertyAll(
+                          switchValue ? Colors.green : Colors.red,
+                        ),
+                      ),
+                    ),
+                    // Text(
+                    //   switchValue ? 'Online' : 'Offline',
+                    //   style: TextStyle(
+                    //     color: Colors.black,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+              SlidingUpPanel(
+                controller: _panelController,
+                panel: _panelController != null
+                    ? CustomPanelWidget(panelController: _panelController!)
+                    : Container(),
+                isDraggable: true,
+                collapsed: CustomCollapsedWidget(),
+                minHeight: MediaQuery.of(context).size.height * 0.11,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
+            ],
+          ),
+          drawer: MenuWidget(),
         ),
-        drawer: MenuWidget(),
       ),
     );
   }
@@ -305,7 +328,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           onPressed: () {
             Constants.showError(context,
-                'Early Acess App , Features will be available Soon...');
+                "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
 
             //Navigator to Earning
           },
@@ -338,12 +361,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               backgroundColor: Colors.black,
               child: IconButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => HomePage(),
+                  //   ),
+                  // );
+                  Constants.showError(context,
+                      "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                 },
                 icon: Icon(
                   Icons.notifications,
@@ -494,7 +519,7 @@ class _CustomCollapsedWidgetState extends State<CustomCollapsedWidget> {
               // Navigator.push(context,
               //     MaterialPageRoute(builder: (context) => EarningPage()));
               Constants.showError(context,
-                  'Early Acess App , Features will be available Soon...');
+                  "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
               break;
             case 3:
               // Navigate to Earning page

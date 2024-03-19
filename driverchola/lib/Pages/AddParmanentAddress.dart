@@ -12,6 +12,7 @@ import 'package:chola_driver_flutter/Widgets/Field.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -70,47 +71,92 @@ class _ParmanentAddressState extends State<ParmanentAddress> {
   }
 
   Future<void> _fetchCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
-      Placemark placemark = placemarks.first;
-      if (Constants.latLang == LatLng(0, 0)) {
-        setState(() {
-          streetController.text = placemark.street ?? '';
-          cityController.text = placemark.locality ?? '';
-          stateController.text = placemark.administrativeArea ?? '';
-          countryController.text = placemark.country ?? '';
-          // countryCodeController.text = placemark.countryCode ?? '';
-          addressline2Controller.text = placemark.subLocality ?? '';
-          apartmentController.text = placemark.subAdministrativeArea ?? '';
-          houseController.text = placemark.subThoroughfare ?? '';
-          postalController.text = placemark.postalCode ?? '';
-
-          // Update other fields as needed
-        });
-      } else {
+    // Check if permission is granted
+    PermissionStatus permissionStatus = await Permission.location.request();
+    if (permissionStatus.isGranted) {
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
         List<Placemark> placemarks = await placemarkFromCoordinates(
-            Constants.latLang.latitude, Constants.latLang.longitude);
+            position.latitude, position.longitude);
         Placemark placemark = placemarks.first;
-        setState(() {
-          streetController.text = placemark.street ?? '';
-          cityController.text = placemark.locality ?? '';
-          stateController.text = placemark.administrativeArea ?? '';
-          countryController.text = placemark.country ?? '';
-          // countryCodeController.text = placemark.countryCode ?? '';
-          addressline2Controller.text = placemark.subLocality ?? '';
-          apartmentController.text = placemark.subAdministrativeArea ?? '';
-          houseController.text = placemark.subThoroughfare ?? '';
-          postalController.text = placemark.postalCode ?? '';
-          // Update other fields as needed
-        });
+        if (Constants.latLang == LatLng(0, 0)) {
+          setState(() {
+            streetController.text = placemark.street ?? '';
+            cityController.text = placemark.locality ?? '';
+            stateController.text = placemark.administrativeArea ?? '';
+            countryController.text = placemark.country ?? '';
+            addressline2Controller.text = placemark.subLocality ?? '';
+            apartmentController.text = placemark.subAdministrativeArea ?? '';
+            houseController.text = placemark.subThoroughfare ?? '';
+            postalController.text = placemark.postalCode ?? '';
+          });
+        } else {
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+              Constants.latLang.latitude, Constants.latLang.longitude);
+          Placemark placemark = placemarks.first;
+          setState(() {
+            streetController.text = placemark.street ?? '';
+            cityController.text = placemark.locality ?? '';
+            stateController.text = placemark.administrativeArea ?? '';
+            countryController.text = placemark.country ?? '';
+            addressline2Controller.text = placemark.subLocality ?? '';
+            apartmentController.text = placemark.subAdministrativeArea ?? '';
+            houseController.text = placemark.subThoroughfare ?? '';
+            postalController.text = placemark.postalCode ?? '';
+          });
+        }
+      } catch (e) {
+        print('Error fetching location: $e');
       }
-    } catch (e) {
-      print('Error fetching location: $e');
+    } else {
+      // Handle case when permission is not granted
+      print('Permission not granted');
     }
   }
+
+  // Future<void> _fetchCurrentLocation() async {
+  //   try {
+  //     Position position = await Geolocator.getCurrentPosition(
+  //         desiredAccuracy: LocationAccuracy.high);
+  //     List<Placemark> placemarks =
+  //         await placemarkFromCoordinates(position.latitude, position.longitude);
+  //     Placemark placemark = placemarks.first;
+  //     if (Constants.latLang == LatLng(0, 0)) {
+  //       setState(() {
+  //         streetController.text = placemark.street ?? '';
+  //         cityController.text = placemark.locality ?? '';
+  //         stateController.text = placemark.administrativeArea ?? '';
+  //         countryController.text = placemark.country ?? '';
+  //         // countryCodeController.text = placemark.countryCode ?? '';
+  //         addressline2Controller.text = placemark.subLocality ?? '';
+  //         apartmentController.text = placemark.subAdministrativeArea ?? '';
+  //         houseController.text = placemark.subThoroughfare ?? '';
+  //         postalController.text = placemark.postalCode ?? '';
+
+  //         // Update other fields as needed
+  //       });
+  //     } else {
+  //       List<Placemark> placemarks = await placemarkFromCoordinates(
+  //           Constants.latLang.latitude, Constants.latLang.longitude);
+  //       Placemark placemark = placemarks.first;
+  //       setState(() {
+  //         streetController.text = placemark.street ?? '';
+  //         cityController.text = placemark.locality ?? '';
+  //         stateController.text = placemark.administrativeArea ?? '';
+  //         countryController.text = placemark.country ?? '';
+  //         // countryCodeController.text = placemark.countryCode ?? '';
+  //         addressline2Controller.text = placemark.subLocality ?? '';
+  //         apartmentController.text = placemark.subAdministrativeArea ?? '';
+  //         houseController.text = placemark.subThoroughfare ?? '';
+  //         postalController.text = placemark.postalCode ?? '';
+  //         // Update other fields as needed
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching location: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

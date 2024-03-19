@@ -82,7 +82,7 @@ class SettingListTile1 extends StatelessWidget {
         trailing: GestureDetector(
           onTap: () {
             Constants.showError(context,
-                'Early Acess App , Features will be available Soon...');
+                "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),

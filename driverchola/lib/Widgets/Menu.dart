@@ -110,7 +110,7 @@ class MenuWidget extends StatelessWidget {
                       title: 'Account',
                       onTap: () {
                         Constants.showError(context,
-                            'Early Acess App , Features will be available Soon...');
+                            "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                         // Navigator.push(
                         //     context,
                         //     MaterialPageRoute(
@@ -125,7 +125,7 @@ class MenuWidget extends StatelessWidget {
                       title: 'Profile',
                       onTap: () {
                         Constants.showError(context,
-                            'Early Acess App , Features will be available Soon...');
+                            "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                       },
                     ),
                     // SizedBox(
@@ -149,7 +149,7 @@ class MenuWidget extends StatelessWidget {
                       title: 'Payments',
                       onTap: () {
                         Constants.showError(context,
-                            'Early Acess App , Features will be available Soon...');
+                            "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                       },
                     ),
                     SizedBox(
@@ -175,7 +175,7 @@ class MenuWidget extends StatelessWidget {
                       title: 'Gift Cards',
                       onTap: () {
                         Constants.showError(context,
-                            'Early Acess App , Features will be available Soon...');
+                            "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                       },
                     ),
                     SizedBox(
@@ -197,7 +197,7 @@ class MenuWidget extends StatelessWidget {
                       title: 'Venture',
                       onTap: () {
                         Constants.showError(context,
-                            'Early Acess App , Features will be available Soon...');
+                            "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                       },
                     ),
                     Divider(
@@ -223,7 +223,7 @@ class MenuWidget extends StatelessWidget {
                       title: 'Support',
                       onTap: () {
                         Constants.showError(context,
-                            'Early Acess App , Features will be available Soon...');
+                            "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                       },
                     ),
                     SizedBox(
@@ -234,7 +234,7 @@ class MenuWidget extends StatelessWidget {
                       title: 'Help',
                       onTap: () {
                         Constants.showError(context,
-                            'Early Acess App , Features will be available Soon...');
+                            "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                       },
                     ),
                     SizedBox(
@@ -245,7 +245,7 @@ class MenuWidget extends StatelessWidget {
                       title: 'Demo',
                       onTap: () {
                         Constants.showError(context,
-                            'Early Acess App , Features will be available Soon...');
+                            "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                       },
                     ),
                   ],

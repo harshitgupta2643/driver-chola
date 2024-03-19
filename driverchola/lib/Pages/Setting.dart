@@ -147,7 +147,7 @@ class _SettingState extends State<Setting> {
                     onChanged: (value) {
                       (!emailReciept)
                           ? Constants.showError(context,
-                              'Early Acess App , Features will be available Soon...')
+                              "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!")
                           : null;
                       setState(() {
                         emailReciept = value;
@@ -167,7 +167,7 @@ class _SettingState extends State<Setting> {
                     onChanged: (value) {
                       (!biometricLoginReciept)
                           ? Constants.showError(context,
-                              'Early Acess App , Features will be available Soon...')
+                              "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!")
                           : null;
                       setState(() {
                         biometricLoginReciept = value;
@@ -187,7 +187,7 @@ class _SettingState extends State<Setting> {
                     onChanged: (value) {
                       (!nightModeReciept)
                           ? Constants.showError(context,
-                              'Early Acess App , Features will be available Soon...')
+                              "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!")
                           : null;
                       setState(() {
                         nightModeReciept = value;
@@ -207,7 +207,7 @@ class _SettingState extends State<Setting> {
                     onChanged: (value) {
                       (!locationAutoShareReciept)
                           ? Constants.showError(context,
-                              'Early Acess App , Features will be available Soon...')
+                              "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!")
                           : null;
                       setState(() {
                         locationAutoShareReciept = value;

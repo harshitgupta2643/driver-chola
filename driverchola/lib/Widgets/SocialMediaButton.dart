@@ -16,20 +16,21 @@ class SocialMediaButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Ink(
-          child: Image.asset(
-            imagePath
-            // 'assets/facebook.png',
-          ),
+          child: Image.asset(imagePath
+              // 'assets/facebook.png',
+              ),
         ),
-        Text(
-          buttontext,
-          // 'Facebook',
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: size.shortestSide * 0.04,
-            fontWeight: FontWeight.bold,
+        FittedBox(
+          child: Text(
+            buttontext,
+            // 'Facebook',
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: size.shortestSide * 0.035,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],

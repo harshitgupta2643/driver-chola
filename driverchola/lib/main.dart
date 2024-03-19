@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'Pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +35,9 @@ void main() async {
   await pushNotificationService.initialize();
   String? token = await pushNotificationService.getToken();
   print('Token on app start: $token');
-  runApp(MyApp());
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -76,7 +79,27 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       return Scaffold(
         backgroundColor: Constants.themeColor,
-        body: _buildContent(),
+        body: UpgradeAlert(
+          dialogStyle: (Platform.isIOS)
+              ? UpgradeDialogStyle.cupertino
+              : UpgradeDialogStyle.material,
+          showIgnore: false,
+          showReleaseNotes: false,
+          showLater: false,
+          upgrader: Upgrader(
+            messages: UpgraderMessages(
+              code:
+                  'A new version of the app is available. Please update to continue using the app.',
+            ),
+            languageCode: 'en',
+          ),
+          onUpdate: () {
+            // Handle update
+            Constants.navigateToUrl();
+            return false; // Return false to close the dialog
+          },
+          child: _buildContent(),
+        ),
       );
     }
   }
@@ -100,10 +123,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: size.width,
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              // Image.asset(
-              //   'assets/tagLine.png',
-              //   width: size.width * 0.6,
-              // ),
               Text(
                 'Drive with CHOLA\n              Own a Chariot',
                 textAlign: TextAlign.center,

@@ -31,13 +31,14 @@ class ApiCollection {
 
   //Api for Verify Phone Number
   static verifyPhoneNumber() async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     // print(dialCode.runtimeType);
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'phoneNoVerified': true,
@@ -55,13 +56,14 @@ class ApiCollection {
   //Api for update the Email..
 
   static createEmail(String email) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     // print(dialCode.runtimeType);
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'email': email,
@@ -77,13 +79,14 @@ class ApiCollection {
   }
 
   static verifyEmail() async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     // print(dialCode.runtimeType);
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'verified': true,
@@ -100,13 +103,14 @@ class ApiCollection {
 
   static createDetails(String firstName, String lastName, int gender,
       String dob, int bloodGroup) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     // print(dialCode.runtimeType);
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'firstName': firstName,
@@ -126,13 +130,14 @@ class ApiCollection {
   }
 
   static updateCity(String cityName) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     // print(dialCode.runtimeType);
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/auth/update'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'cityName': cityName,
@@ -156,12 +161,13 @@ class ApiCollection {
       String state,
       String country,
       String postalCode) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'userId': Constants.user_data['user']['id'],
@@ -186,12 +192,13 @@ class ApiCollection {
 
   static updateAadharCard(
       String aadharCardNo, String aadharFront, String aadharBack) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'userId': Constants.user_data['user']['id'],
@@ -211,12 +218,13 @@ class ApiCollection {
 
   static updatePanCard(
       String panCardNo, String panFront, String panBack) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'userId': Constants.user_data['user']['id'],
@@ -240,12 +248,13 @@ class ApiCollection {
     String licenceFront,
     String licenceBack,
   ) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'userId': Constants.user_data['user']['id'],
@@ -271,12 +280,13 @@ class ApiCollection {
     String branchName,
     String bankName,
   ) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'userId': Constants.user_data['user']['id'],
@@ -299,12 +309,13 @@ class ApiCollection {
   static updateLivePhoto(
     String livePhoto,
   ) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'userId': Constants.user_data['user']['id'],
@@ -328,24 +339,24 @@ class ApiCollection {
     String vehicleColor,
     String licensePlateNo,
     String vehiclePicture,
-
   ) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
       body: jsonEncode({
         'userId': Constants.user_data['user']['id'],
-        "vehicleType":vehicleType,
-        "vehicleCompany":vehicleCompany,
-        "vehicleModel":vehicleModel,
-        "vehicleYear":vehicleYear,
-        "vehicleColor":vehicleColor,
-        "licensePlateNo":licensePlateNo,
-        "vehiclePicture":vehiclePicture,
+        "vehicleType": vehicleType,
+        "vehicleCompany": vehicleCompany,
+        "vehicleModel": vehicleModel,
+        "vehicleYear": vehicleYear,
+        "vehicleColor": vehicleColor,
+        "licensePlateNo": licensePlateNo,
+        "vehiclePicture": vehiclePicture,
       }),
     );
     print(response.body);
@@ -362,22 +373,22 @@ class ApiCollection {
     String registrationExpiryDate,
     String registrationFront,
     String registrationBack,
-
   ) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
-      body: jsonEncode( {
+      body: jsonEncode({
         "userId": Constants.user_data['user']['id'],
-        "registrationCard":registrationCard,
-        "registrationExpiryDate":registrationExpiryDate,
-        "registrationFront":registrationFront,
-        "registrationBack":registrationBack,
-    }),
+        "registrationCard": registrationCard,
+        "registrationExpiryDate": registrationExpiryDate,
+        "registrationFront": registrationFront,
+        "registrationBack": registrationBack,
+      }),
     );
     print(response.body);
     if (response.statusCode == 200) {
@@ -393,22 +404,22 @@ class ApiCollection {
     String expiryDateCarInsurance,
     String carInsuranceFront,
     String carInsuranceBack,
-
   ) async {
+    Map<String, dynamic> x = await Constants.fetchResult();
     print('dhjbcjdkbcdkj');
     var response = await http.put(
       Uri.parse('https://chola-web-app.azurewebsites.net/api/user/document'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${Constants.user_data['jwt']}',
+        'Authorization': 'Bearer ${x['jwt']}',
       },
-      body: jsonEncode( {
+      body: jsonEncode({
         "userId": Constants.user_data['user']['id'],
-        "carinsuranceNo":carinsuranceNo,
-        "expiryDateCarInsurance":expiryDateCarInsurance,
-        "carInsuranceFront":carInsuranceFront,
-        "carInsuranceBack":carInsuranceBack,
-    }),
+        "carinsuranceNo": carinsuranceNo,
+        "expiryDateCarInsurance": expiryDateCarInsurance,
+        "carInsuranceFront": carInsuranceFront,
+        "carInsuranceBack": carInsuranceBack,
+      }),
     );
     print(response.body);
     if (response.statusCode == 200) {
@@ -416,6 +427,28 @@ class ApiCollection {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to update car Insurance Details.');
+    }
+  }
+
+  static Future<String> onUpdateApi() async {
+    try {
+      Map<String, dynamic> x = await Constants.fetchResult();
+      var response = await http.get(
+        Uri.parse('https://chola-web-app.azurewebsites.net/api/update'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${x['jwt']}',
+          // Add any additional headers if required
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body)['url'];
+      } else {
+        throw Exception('Failed to fetch URL');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch URL: $e');
     }
   }
 }

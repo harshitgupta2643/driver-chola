@@ -90,7 +90,7 @@ class _ReferAndEarnState extends State<ReferAndEarn> {
                     height: size.height * 0.03,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SocialMediaButton(
@@ -111,13 +111,9 @@ class _ReferAndEarnState extends State<ReferAndEarn> {
                     height: size.height * 0.03,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SocialMediaButton(
-                        imagePath: 'assets/Email.png',
-                        buttontext: 'Email',
-                      ),
                       SocialMediaButton(
                         imagePath: 'assets/Telegram.png',
                         buttontext: 'Telegram',
@@ -125,6 +121,10 @@ class _ReferAndEarnState extends State<ReferAndEarn> {
                       SocialMediaButton(
                         imagePath: 'assets/LinkedIn.png',
                         buttontext: 'LinkedIn',
+                      ),
+                      SocialMediaButton(
+                        imagePath: 'assets/Email.png',
+                        buttontext: 'Email',
                       ),
                     ],
                   ),
@@ -169,7 +169,7 @@ class _ReferAndEarnState extends State<ReferAndEarn> {
                       //   ),
                       // );
                       Constants.showError(context,
-                          'Early Acess App , Features will be available Soon...');
+                          "Stay Tuned for an Exciting Addition! We're thrilled to announce a new feature coming your way!");
                     },
                     padding: 0.6,
                   ),
